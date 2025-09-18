@@ -205,6 +205,8 @@ export class AssetManagerView extends ItemView {
 			const recycleLine = costsEl.createDiv('asset-price');
 			recycleLine.textContent = `${t('view.recyclePrice')} ${this.getCurrencySymbol()}${asset.recyclePrice}`;
 			let didLongPress = false;
+			let isTouchActive = false;
+			let lastTouchTime = 0;
 			assetEl.addEventListener('click', (e) => {
 				if (didLongPress) {
 					didLongPress = false;
@@ -230,12 +232,16 @@ export class AssetManagerView extends ItemView {
 			};
 			const cancelPress = () => { if (pressTimer) { window.clearTimeout(pressTimer); pressTimer = null; } };
 			assetEl.addEventListener('mousedown', startPress);
-			assetEl.addEventListener('touchstart', startPress, { passive: true } as any);
+			const onTouchStart = (ev: TouchEvent) => { isTouchActive = true; lastTouchTime = Date.now(); startPress(ev); };
+			assetEl.addEventListener('touchstart', onTouchStart, { passive: true } as any);
 			assetEl.addEventListener('mouseup', cancelPress);
 			assetEl.addEventListener('mouseleave', cancelPress);
-			assetEl.addEventListener('touchend', cancelPress);
+			const onTouchEnd = () => { isTouchActive = false; cancelPress(); };
+			assetEl.addEventListener('touchend', onTouchEnd);
 			assetEl.addEventListener('contextmenu', async (e) => {
 				e.preventDefault();
+				// 忽略来自触摸/长按触发的 contextmenu（移动端长按）
+				if (didLongPress || isTouchActive || (Date.now() - lastTouchTime < 800)) return;
 				const ok = await new ConfirmModal(t('view.confirmDeleteAsset', { name: asset.name }), t('common.delete'), t('common.cancel'), true).open();
 				if (!ok) return;
 				await this.assetRepository.deleteAsset(asset.id);
