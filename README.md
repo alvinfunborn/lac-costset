@@ -1,17 +1,52 @@
-# Lac-CostSet 插件
+# LaC CostSet — Personal Inventory as Code for Obsidian
 
-Life as Code - CostSet 资产管理插件，将你的生活物品以代码化的方式进行管理。
+Manage your belongings as structured TOML-in-Markdown inside Obsidian. Track price, purchase/end dates, tags, and optional recycle value. Explore daily cost trends, filter by tags, search, sort, and add/edit items with a clean UI.
 
-## 功能特性
+![Demo](docs/demo.png)
 
-### 🎯 核心功能
-- **资产管理**: 记录物品的购入价格、日期、回收价格等信息
-- **成本计算**: 自动计算每个物品的日均使用成本
-- **标签系统**: 支持多标签分类管理
-- **数据统计**: 提供总投入、可回收价值、日均成本等统计信息
+## What this plugin does
 
-### 📊 数据格式
-使用TOML格式存储资产数据，与Obsidian的Markdown文件完美集成：
+- **Open a dedicated view for an inventory entry file** and render your items as cards with totals and a cost trend chart.
+- **Generate a sample entry + sample items on first run** if the configured entry file does not exist.
+- **Read/write items as TOML** (with comments preserved). Wikilinks like `[[ItemName]]` are supported inside Markdown; the plugin quotes them only temporarily for parsing.
+- **Filter, search, sort**: filter by tags, search by name/tags, sort by daily cost / price / purchase date.
+- **Add/edit/delete items** in place. Long-press a card to temporarily toggle hidden (not persisted).
+- **Local-first**: All data stays inside your vault.
+
+## How to open the view
+
+- Command palette: run "Open LaC.CostSet" (command id: `open-lac-costset`). The plugin will use the configured entry file (see Settings) and create a sample if missing.
+- File context menu: right-click a Markdown file and choose "Open with LaC.CostSet" to use that file as the entry (enable this in Settings).
+
+> The view type is `lac-costset-view`. On startup the plugin avoids auto-restoring this view to keep your layout clean.
+
+## Entry file format (required)
+
+The entry file is a Markdown file whose content must satisfy a minimal TOML header plus a body of wikilinks to item files.
+
+Minimal example:
+
+```toml
+# Top TOML must include
+type = "root"
+renders = ["costset"]
+
+# Body: list asset filenames using wikilinks (no extension)
+
+[[Keyboard]]
+[[Headphones]]
+```
+
+Notes:
+- The file extension can be `.md`.
+- Lines starting with `#` are comments and will be preserved.
+- Wikilinks in the body can be unquoted; the plugin quotes them only for TOML parsing internally.
+
+## Item note format (TOML)
+
+You can use either the flat schema or the namespaced schema. Both are supported on read; on save the plugin rewrites only the costset-related keys and preserves leading comments.
+
+Flat schema (default emit on new files):
 
 ```toml
 name = "Thinkbook14p2025"
@@ -24,80 +59,61 @@ price = 7999
 active_from = "2023-01-01"
 active_to = ""
 recycle_price = 1200
-tags = ["电脑", "办公"]
-hidden = false
+tags = ["computer", "work"]
 ```
 
-### 🔧 插件命令
+Namespaced schema (also accepted):
 
-1. **打开资产管理器** - 查看所有资产列表
-2. **添加新资产** - 快速添加新的资产项目
-3. **显示资产统计** - 查看资产统计信息
-4. **数据迁移** - 导入导出数据
+```toml
+[costset]
+name = "Thinkbook14p2025"
+hidden = false
 
-### 📁 文件结构
+[costset.style]
+icon = "💻"
 
-插件会在指定的文件夹中创建以下文件：
-- `costset.md` - 根文件，包含所有资产的引用
-- `{资产ID}.md` - 每个资产的详细数据文件
+[costset.detail]
+price = 7999
+active_from = "2023-01-01"
+active_to = ""
+recycle_price = 1200
+tags = ["computer", "work"]
+```
 
-### ⚙️ 设置选项
+Daily cost is computed from `(price - recycle_price) / daysUsed` where `daysUsed` goes from `active_from` to the selected date (or `active_to` if it ended earlier). The trend chart treats `recycle_price` as `0` until the end date is reached.
 
-- **资产文件夹**: 指定存储资产文件的文件夹路径（默认：costset）
-- **自动同步**: 是否自动同步资产数据
-- **默认图标**: 新资产的默认图标
+## UI overview
 
-## 使用方法
+- Top summary: total daily cost, total price, total recyclable value; tag chips to filter; date picker; cost trend chart with progressive refinement.
+- Action bar: search box, sort button (daily cost / price / purchase date), add button.
+- Item cards: name, dates, tags, daily cost, price, recycle price; click to edit; long-press to toggle hidden (in-memory); right-click to delete.
 
-### 1. 安装插件
-将插件文件夹复制到 `.obsidian/plugins/` 目录下，然后在Obsidian中启用插件。
+## Settings
 
-### 2. 添加资产
-使用命令面板（Ctrl+P）搜索"添加新资产"，填写资产信息：
-- 名称：资产的名称
-- 图标：选择一个emoji作为图标
-- 价格：购入价格
-- 开始日期：购入日期
-- 结束日期：计划报废/回收日期（可选）
-- 回收价格：预计回收价格
-- 标签：用逗号分隔的标签
+- **Entry file**: path to the inventory entry Markdown file. Default: `costset/costset.md`.
+- **Enable context menu**: show "Open with LaC.CostSet" in Markdown file context menu.
+- **Default sort**: none (text order) | daily cost | price | purchase date.
+- **Default icon**: one Emoji for new items. Only the first Emoji is kept when pasting text.
+- **Language**: Auto / 中文 / English. Currency symbol adapts: `¥` for zh, `$` for en.
 
-### 3. 管理资产
-使用"打开资产管理器"命令查看所有资产，可以编辑或删除现有资产。
+## Installation
 
-### 4. 查看统计
-使用"显示资产统计"命令查看：
-- 总资产数量
-- 总投入金额
-- 可回收价值
-- 日均成本
-- 标签统计
+1) Copy the plugin folder into `.obsidian/plugins/`.
+2) Enable it in Settings → Community plugins.
 
-## 数据迁移
+Optional (testing via BRAT): install the community plugin “BRAT” and add your repository to get auto-updates.
 
-如果你已经有costsetapp小程序的数据，可以：
+## Notes & limitations
 
-1. 导出小程序数据为TOML格式
-2. 将TOML文件复制到Obsidian的资产文件夹
-3. 更新根文件`costset.md`添加资产引用
+- "Hidden" is a temporary per-view toggle for quick comparisons; it is not persisted to files.
+- The plugin rewrites only fields related to costset (name, style.icon, detail.*) and keeps your leading comments.
 
-## 技术实现
+## Tech
 
-- 使用Obsidian Plugin API进行文件操作
-- 支持TOML格式的数据存储
-- 响应式UI设计，支持移动端
-- 完全本地存储，保护用户隐私
+- Obsidian Plugin API
+- Lightweight TOML reader/writer with comment preservation and wikilink support
+- Responsive UI; mobile friendly; local-first
 
-## 开发说明
-
-插件基于Obsidian Plugin API开发，主要组件：
-
-- `Asset`: 资产实体类
-- `AssetRepository`: 数据访问层，使用Obsidian API
-- `AssetManagerModal`: 资产管理界面
-- `AssetFormModal`: 资产表单界面
-- `AssetSummaryModal`: 统计信息界面
-
-## 许可证
+## License
 
 MIT License

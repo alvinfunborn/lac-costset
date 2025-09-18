@@ -1,1 +1,10 @@
-{"id":"lac-costset","name":"LaC.CostSet","version":"1.0.0","minAppVersion":"0.15.0","description":"Life as Code - CostSet 资产管理插件","author":"sin5","authorUrl":"https://github.com/sin5","fundingUrl":"","isDesktopOnly":false}
+{
+    "id": "lac-costset",
+    "name": "LaC.CostSet",
+    "version": "1.0.0",
+    "minAppVersion": "1.6.0",
+    "description": "Manage your personal inventory as structured data inside Obsidian. Track purchase price, dates, tags, recycling value, and see daily cost stats.",
+    "author": "alvinfunborn",
+    "authorUrl": "https://github.com/alvinfunborn",
+    "isDesktopOnly": false
+}

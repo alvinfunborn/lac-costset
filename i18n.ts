@@ -46,7 +46,7 @@ const dict: Dict = {
 	'notice.saveFailed': { zh: '保存失败: {msg}', en: 'Save failed: {msg}' },
 
 	// Settings
-	'settings.title': { zh: 'Lac.CostSet 设置', en: 'Lac.CostSet Settings' },
+	'settings.title': { zh: 'LaC.CostSet 设置', en: 'LaC.CostSet Settings' },
 	'settings.guide.1': {
 		zh: '重要：入口文件与资产文件的“内容格式为 TOML”，文件扩展名可为 .md。允许 # 开头的注释。唯一的非 TOML 例外是：文件正文中的 [[资产文件名]] 双链可省略引号，插件在解析时会临时为其加上引号后按 TOML 处理。除这点外，不应混入普通 Markdown 文本。',
 		en: 'Important: Entry and asset files must be TOML content (extension can be .md). Comments starting with # are allowed. The only non-TOML exception: [[asset filename]] wikilinks in the body can omit quotes; the plugin will temporarily quote them for TOML parsing. No other regular Markdown should be mixed.'
