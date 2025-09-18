@@ -751,7 +751,8 @@ export class AssetFormModal {
 		const container = dayColumn.element.querySelector('.date-wheel-items') as HTMLElement;
 		const currentDay = dayColumn.selectedValue;
 		const newDays = this.generateDays(year, month);
-		container.innerHTML = '';
+		// 安全清空容器，避免使用 innerHTML
+		while (container.firstChild) container.removeChild(container.firstChild);
 		const repeatCount = 5;
 		const itemHeight = 40;
 		const middleGroupIndex = 2;

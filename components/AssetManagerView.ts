@@ -68,13 +68,17 @@ export class AssetManagerView extends ItemView {
 		hint.style.opacity = '0.8';
 		hint.textContent = t('view.hint.openFromMenu');
 		return;
-
-		this.loadAssets();
 	}
 
 	async onClose() {
 		const { containerEl } = this;
 		containerEl.empty();
+		// 清理动态注入的样式与弹窗
+		try { this.closeExistingSortMenu(); } catch (_) {}
+		['lac-costset-actionbar-styles', 'lac-costset-header-styles'].forEach((id) => {
+			const el = document.getElementById(id);
+			if (el && el.parentElement) el.parentElement.removeChild(el);
+		});
 	}
 
 	private async useFile(filePath: string) {
@@ -179,23 +183,27 @@ export class AssetManagerView extends ItemView {
 			const assetEl = assetsContainer.createDiv('asset-card');
 			if (isExpired) assetEl.addClass('asset-card--expired');
 			if (asset.hidden) assetEl.addClass('hidden');
-			assetEl.innerHTML = `
-				<div class="asset-info">
-					<div class="asset-title">${asset.icon} ${asset.name}</div>
-					<div class="asset-date">${t('view.usedDays', { days: asset.getUsageDays(calcDate) })} (${asset.activeFrom.toISOString().split('T')[0]} ~ ${asset.activeTo ? endText : t('view.toNow')})</div>
-					<div class="asset-labels-scroll">
-						${asset.tags.map(tag => `<span class=\"tag\">${tag}</span>`).join('')}
-					</div>
-				</div>
-				<div class="asset-costs">
-					<div class="asset-costs-line">
-						<div class="asset-price">${t('view.daily')}&nbsp;</div>
-						<div class="asset-dailycost">¥${asset.getDailyCost(calcDate).toFixed(2)}</div>
-					</div>
-					<div class="asset-price">${t('view.price')} ${this.getCurrencySymbol()}${asset.price}</div>
-					<div class="asset-price">${t('view.recyclePrice')} ${this.getCurrencySymbol()}${asset.recyclePrice}</div>
-				</div>
-			`;
+			// 构建安全的 DOM 结构，避免 innerHTML
+			const infoEl = assetEl.createDiv('asset-info');
+			const titleEl = infoEl.createDiv('asset-title');
+			titleEl.textContent = `${asset.icon} ${asset.name}`;
+			const dateEl = infoEl.createDiv('asset-date');
+			dateEl.textContent = `${t('view.usedDays', { days: asset.getUsageDays(calcDate) })} (${asset.activeFrom.toISOString().split('T')[0]} ~ ${asset.activeTo ? endText : t('view.toNow')})`;
+			const labelsScrollEl = infoEl.createDiv('asset-labels-scroll');
+			(asset.tags || []).forEach(tag => {
+				const tagEl = labelsScrollEl.createSpan('tag');
+				tagEl.textContent = tag;
+			});
+			const costsEl = assetEl.createDiv('asset-costs');
+			const costsLine = costsEl.createDiv('asset-costs-line');
+			const priceMeta = costsLine.createDiv('asset-price');
+			priceMeta.textContent = `${t('view.daily')}\u00A0`;
+			const dailyCost = costsLine.createDiv('asset-dailycost');
+			dailyCost.textContent = this.getCurrencySymbol() + `${asset.getDailyCost(calcDate).toFixed(2)}`;
+			const priceLine = costsEl.createDiv('asset-price');
+			priceLine.textContent = `${t('view.price')} ${this.getCurrencySymbol()}${asset.price}`;
+			const recycleLine = costsEl.createDiv('asset-price');
+			recycleLine.textContent = `${t('view.recyclePrice')} ${this.getCurrencySymbol()}${asset.recyclePrice}`;
 			let didLongPress = false;
 			assetEl.addEventListener('click', (e) => {
 				if (didLongPress) {
@@ -256,7 +264,7 @@ export class AssetManagerView extends ItemView {
 
 		// 窄屏返回按钮（避免系统标题栏隐藏时无处返回）
 		const backBtn = bar.createDiv({ cls: 'lac-icon-btn back', attr: { title: t('view.back') } });
-		backBtn.innerHTML = this.svgBack();
+		backBtn.appendChild(this.svgBack());
 		backBtn.addEventListener('click', (e) => {
 			e.preventDefault();
 			// 直接关闭当前叶子（标签），等效“返回/关闭”
@@ -266,7 +274,7 @@ export class AssetManagerView extends ItemView {
 		// 左侧：搜索输入（内嵌图标按钮）
 		const searchWrap = bar.createDiv('lac-actionbar-search');
 		const searchIconBtn = searchWrap.createEl('button', { cls: 'lac-icon-btn search-icon', attr: { type: 'button', 'aria-label': t('view.search.aria') } });
-		searchIconBtn.innerHTML = this.svgSearch();
+		searchIconBtn.appendChild(this.svgSearch());
 		const searchInput = searchWrap.createEl('input', { attr: { type: 'text', placeholder: t('view.search.placeholder') } }) as HTMLInputElement;
 		if (this.searchQuery) searchInput.value = this.searchQuery;
 		searchIconBtn.addEventListener('click', () => searchInput.focus());
@@ -278,7 +286,7 @@ export class AssetManagerView extends ItemView {
 		// 右侧：操作按钮区（排序、添加）
 		const actions = bar.createDiv('lac-actionbar-actions');
 		const sortBtn = actions.createDiv({ cls: 'lac-icon-btn sort', attr: { title: t('view.sort.title') } });
-		sortBtn.innerHTML = this.svgSort();
+		sortBtn.appendChild(this.svgSort());
 		const applySortBtnState = () => {
 			sortBtn.classList.toggle('active', this.sortMode !== 'none');
 			sortBtn.setAttr('data-mode', this.sortMode);
@@ -300,7 +308,7 @@ export class AssetManagerView extends ItemView {
         });
 
 		const addBtn = actions.createDiv({ cls: 'lac-icon-btn add', attr: { title: t('view.add') } });
-		addBtn.innerHTML = this.svgPlus();
+		addBtn.appendChild(this.svgPlus());
 		addBtn.addEventListener('click', () => {
 			new AssetFormModal(this.app, this.assetRepository, undefined, () => this.loadAssets()).open();
 		});
@@ -407,18 +415,16 @@ export class AssetManagerView extends ItemView {
         menu.style.top = `${top}px`;
         menu.style.left = `${left}px`;
 
-        const onDocClick = (ev: MouseEvent) => {
-            if (!menu.contains(ev.target as Node)) this.closeExistingSortMenu();
-        };
-        const onEsc = (ev: KeyboardEvent) => {
-            if (ev.key === 'Escape') this.closeExistingSortMenu();
-        };
-        document.addEventListener('mousedown', onDocClick, { once: true });
-        document.addEventListener('keydown', onEsc, { once: true });
-        (menu as any)._cleanup = () => {
-            document.removeEventListener('mousedown', onDocClick);
-            document.removeEventListener('keydown', onEsc);
-        };
+		const onDocClick = (ev: MouseEvent) => {
+			if (!menu.contains(ev.target as Node)) this.closeExistingSortMenu();
+		};
+		const onEsc = (ev: KeyboardEvent) => {
+			if (ev.key === 'Escape') this.closeExistingSortMenu();
+		};
+		// 使用 registerDomEvent 以便在视图卸载时自动清理
+		this.registerDomEvent(document, 'mousedown', onDocClick as any, { once: true } as any);
+		this.registerDomEvent(document, 'keydown', onEsc as any, { once: true } as any);
+		(menu as any)._cleanup = undefined;
     }
 
     // 让视图可被 setViewState 恢复与导航：保存/应用状态
@@ -452,38 +458,75 @@ export class AssetManagerView extends ItemView {
         }
     }
 
-	private svgSearch(): string {
-		return `
-			<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
-				<line x1="20" y1="20" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-			</svg>
-		`;
+	private svgSearch(): SVGSVGElement {
+		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		svg.setAttribute('viewBox', '0 0 24 24');
+		svg.setAttribute('fill', 'none');
+		const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+		circle.setAttribute('cx', '11');
+		circle.setAttribute('cy', '11');
+		circle.setAttribute('r', '7');
+		circle.setAttribute('stroke', 'currentColor');
+		circle.setAttribute('stroke-width', '2');
+		svg.appendChild(circle);
+		const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+		line.setAttribute('x1', '20');
+		line.setAttribute('y1', '20');
+		line.setAttribute('x2', '16.65');
+		line.setAttribute('y2', '16.65');
+		line.setAttribute('stroke', 'currentColor');
+		line.setAttribute('stroke-width', '2');
+		line.setAttribute('stroke-linecap', 'round');
+		svg.appendChild(line);
+		return svg as SVGSVGElement;
 	}
 
-	private svgPlus(): string {
-		return `
-			<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-			</svg>
-		`;
+	private svgPlus(): SVGSVGElement {
+		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		svg.setAttribute('viewBox', '0 0 24 24');
+		svg.setAttribute('fill', 'none');
+		const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		path.setAttribute('d', 'M12 5v14M5 12h14');
+		path.setAttribute('stroke', 'currentColor');
+		path.setAttribute('stroke-width', '2');
+		path.setAttribute('stroke-linecap', 'round');
+		svg.appendChild(path);
+		return svg as SVGSVGElement;
 	}
 
-	private svgSort(): string {
-		return `
-			<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M8 9l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-				<path d="M16 15l-4 4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-			</svg>
-		`;
+	private svgSort(): SVGSVGElement {
+		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		svg.setAttribute('viewBox', '0 0 24 24');
+		svg.setAttribute('fill', 'none');
+		const p1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		p1.setAttribute('d', 'M8 9l4-4 4 4');
+		p1.setAttribute('stroke', 'currentColor');
+		p1.setAttribute('stroke-width', '2');
+		p1.setAttribute('stroke-linecap', 'round');
+		p1.setAttribute('stroke-linejoin', 'round');
+		svg.appendChild(p1);
+		const p2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		p2.setAttribute('d', 'M16 15l-4 4-4-4');
+		p2.setAttribute('stroke', 'currentColor');
+		p2.setAttribute('stroke-width', '2');
+		p2.setAttribute('stroke-linecap', 'round');
+		p2.setAttribute('stroke-linejoin', 'round');
+		svg.appendChild(p2);
+		return svg as SVGSVGElement;
 	}
 
-	private svgBack(): string {
-		return `
-			<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-			</svg>
-		`;
+	private svgBack(): SVGSVGElement {
+		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		svg.setAttribute('viewBox', '0 0 24 24');
+		svg.setAttribute('fill', 'none');
+		const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		path.setAttribute('d', 'M15 18l-6-6 6-6');
+		path.setAttribute('stroke', 'currentColor');
+		path.setAttribute('stroke-width', '2');
+		path.setAttribute('stroke-linecap', 'round');
+		path.setAttribute('stroke-linejoin', 'round');
+		svg.appendChild(path);
+		return svg as SVGSVGElement;
 	}
 
 	private renderTopSummary(containerEl: HTMLElement) {
@@ -600,7 +643,6 @@ export class AssetManagerView extends ItemView {
 	}
 
 	private getCurrencySymbol(): string {
-		const { t } = require('../i18n');
 		return t('currency.symbol');
 	}
 

@@ -10,7 +10,7 @@ export interface LacCostSetSettings {
 // 默认设置
 export const DEFAULT_SETTINGS: LacCostSetSettings = {
     defaultIcon: '📦',
-    entryFile: 'costset/costset.md',
+    entryFile: 'LaC/CostSet/costset.md',
     enableContextMenu: true,
     defaultSort: 'none',
     locale: 'auto'

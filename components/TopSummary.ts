@@ -580,8 +580,12 @@ export class TopSummary {
 		const currentDay = dayColumn.selectedValue;
 		const newDays = this.generateDays(year, month);
 		
-		// 清空现有内容
-		container.innerHTML = '';
+		// 清空现有内容（避免使用 innerHTML）
+		if ((container as any).empty) {
+			(container as any).empty();
+		} else {
+			while (container.firstChild) container.removeChild(container.firstChild);
+		}
 		
 		// 重新创建日期选项（循环滚动）
 		const maxDay = Math.max(...newDays);

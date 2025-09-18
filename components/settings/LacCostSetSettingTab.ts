@@ -32,10 +32,10 @@ export class LacCostSetSettingTab extends PluginSettingTab {
 			.setName(t('settings.entryFile.name'))
 			.setDesc(t('settings.entryFile.desc'))
 			.addText(text => text
-				.setPlaceholder('costset/costset.md')
-				.setValue(this.plugin.settings.entryFile || 'costset/costset.md')
+				.setPlaceholder('LaC/CostSet/costset.md')
+				.setValue(this.plugin.settings.entryFile || 'LaC/CostSet/costset.md')
 				.onChange(async (value) => {
-					this.plugin.settings.entryFile = value?.trim() || 'costset/costset.md';
+					this.plugin.settings.entryFile = value?.trim() || 'LaC/CostSet/costset.md';
 					await this.plugin.saveSettings();
 					// 立即用新的入口文件重建仓库
 					this.plugin.assetRepository = new AssetRepository(this.app, this.plugin.settings.entryFile);

@@ -19,15 +19,10 @@ export default class LacCostSetPlugin extends Plugin {
 		setLocale(this.settings.locale || 'auto');
 
 		// 初始化AssetRepository（使用设置中的入口文件路径）
-		this.assetRepository = new AssetRepository(this.app, this.settings.entryFile || 'costset/costset.md');
+		this.assetRepository = new AssetRepository(this.app, this.settings.entryFile || 'LaC/CostSet/costset.md');
 
-		// 注册视图
+		// 注册视图（允许 Obsidian 正常恢复布局）
 		this.registerView('lac-costset-view', (leaf) => new AssetManagerView(leaf, this.assetRepository));
-
-		// 避免启动时自动恢复本插件的视图（在布局恢复完成后清理）
-		this.app.workspace.onLayoutReady(() => {
-			this.app.workspace.detachLeavesOfType('lac-costset-view');
-		});
 
 		// 添加文件菜单项
 		this.registerEvent(
@@ -58,7 +53,7 @@ export default class LacCostSetPlugin extends Plugin {
 			id: 'open-lac-costset',
 			name: t('command.open'),
 			callback: async () => {
-				const entryPath = this.settings.entryFile || 'costset/costset.md';
+				const entryPath = this.settings.entryFile || 'LaC/CostSet/costset.md';
 				const ensureFolderExists = async (folderPath: string) => {
 					const folder = this.app.vault.getAbstractFileByPath(folderPath);
 					if (!folder) {
@@ -75,7 +70,7 @@ export default class LacCostSetPlugin extends Plugin {
 
 					// 写入示例入口内容（含必要 TOML 头部 + 演示双链）
 					const sampleEntry = `# LaC.CostSet 入口\n\n# 以下为入口元数据（TOML）\n# 要求：type = \"root\" 且 renders 包含 \"costset\"\n\ntype = \"root\"\nrenders = [\"costset\"]\n\n# 以下为示例资产，您可以删除并替换为自己的资产：\n\n[[演示-键盘]]\n[[演示-耳机]]\n[[演示-路由器]]\n`;
-					await this.app.vault.adapter.write(entryPath, sampleEntry);
+					await this.app.vault.create(entryPath, sampleEntry);
 
 					// 在同目录创建示例资产文件（TOML 内容）
 					const makeAssetToml = (name: string, icon: string, price: number, from: string, to?: string, recycle?: number, tags?: string[]) => {
@@ -95,7 +90,7 @@ export default class LacCostSetPlugin extends Plugin {
 						return lines.join('\n');
 					};
 
-					const assetsFolder = folderPath || 'costset';
+					const assetsFolder = folderPath || 'LaC/CostSet';
 					await ensureFolderExists(assetsFolder);
 					const assetDefs = [
 						{ id: '演示-键盘', icon: '⌨️', price: 399, from: '2024-01-01', to: '', recycle: 0, tags: ['数码', '键盘'] },
@@ -105,9 +100,9 @@ export default class LacCostSetPlugin extends Plugin {
 					for (const a of assetDefs) {
 						const filePath = `${assetsFolder}/${a.id}.md`;
 						const exists = this.app.vault.getAbstractFileByPath(filePath);
-						if (!exists) {
-							await this.app.vault.adapter.write(filePath, makeAssetToml(a.id, a.icon, a.price, a.from, a.to, a.recycle, a.tags));
-						}
+							if (!exists) {
+								await this.app.vault.create(filePath, makeAssetToml(a.id, a.icon, a.price, a.from, a.to, a.recycle, a.tags));
+							}
 					}
 				}
 

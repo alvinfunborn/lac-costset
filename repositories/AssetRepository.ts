@@ -86,12 +86,12 @@ export class AssetRepository {
 			}
 						const initialContent = this.dequoteWikilinks(asset.toTomlString());
 			try {
-								await this.app.vault.adapter.write(filePath, initialContent);                                                                   
+							await this.app.vault.create(filePath, initialContent);                                                                    
 			} catch (e) {
 				// 尝试使用 encode 后的文件名再次创建
 				fileName = `${encodeURIComponent(asset.id)}.md`;
 				filePath = `${this.getAssetsFolder()}/${fileName}`;
-								await this.app.vault.adapter.write(filePath, initialContent);                                                                   
+							await this.app.vault.create(filePath, initialContent);                                                                    
 			}
 		} else {
 			// 纯 TOML 重写模式：读取→解析→仅改相关键→整体重写；注释置顶保留
@@ -138,7 +138,12 @@ export class AssetRepository {
 					rootContent = rootContent.replace(/\n{3,}/g, '\n\n').trimEnd();
 			}
 
-		await this.app.vault.adapter.write(rootPath, rootContent);
+		const existingRoot = this.app.vault.getAbstractFileByPath(rootPath);
+		if (existingRoot && existingRoot instanceof TFile) {
+			await this.app.vault.modify(existingRoot, rootContent);
+		} else {
+			await this.app.vault.create(rootPath, rootContent);
+		}
 	}
 
 	// 解析TOML内容（支持嵌套节名，如 [costset.detail]）

@@ -1,10 +1,10 @@
 {
   "defaultIcon": "",
-  "entryFile": "costset/阿costset.md",
+  "entryFile": "LaC/CostSet/costset.md",
   "enableContextMenu": true,
   "defaultSort": "none",
   "locale": "en",
-  "assetsFolder": "costset",
-  "rootFilePath": "costset/costset.md",
+  "assetsFolder": "LaC/CostSet",
+  "rootFilePath": "LaC/CostSet/costset.md",
   "autoSync": true
 }

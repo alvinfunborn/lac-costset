@@ -68,7 +68,7 @@ const dict: Dict = {
 		en: 'Usage: Right-click on the entry file → choose "Open with LaC.CostSet". Or run the command "Open LaC.CostSet" (uses the configured entry file below).'
 	},
 	'settings.entryFile.name': { zh: '入口文件', en: 'Entry file' },
-	'settings.entryFile.desc': { zh: '作为资产入口的 Markdown 文件路径，例如 costset/costset.md', en: 'Path to the Markdown entry file, e.g., costset/costset.md' },
+	'settings.entryFile.desc': { zh: '作为资产入口的 Markdown 文件路径，例如 LaC/CostSet/costset.md', en: 'Path to the Markdown entry file, e.g., LaC/CostSet/costset.md' },
 	'settings.contextMenu.name': { zh: '启用右键菜单 “用 LaC.CostSet 打开”', en: 'Enable context menu "Open with LaC.CostSet"' },
 	'settings.contextMenu.desc': { zh: '在 Markdown 文件的右键菜单中显示入口', en: 'Show entry in Markdown file context menu' },
 	'settings.defaultSort.name': { zh: '默认排序', en: 'Default sort' },

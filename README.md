@@ -90,11 +90,11 @@ Daily cost is computed from `(price - recycle_price) / daysUsed` where `daysUsed
 
 ## Settings
 
-- **Entry file**: path to the inventory entry Markdown file. Default: `costset/costset.md`.
+- **Entry file**: path to the inventory entry Markdown file. Default: `LaC/CostSet/costset.md`.
 - **Enable context menu**: show "Open with LaC.CostSet" in Markdown file context menu.
 - **Default sort**: none (text order) | daily cost | price | purchase date.
 - **Default icon**: one Emoji for new items. Only the first Emoji is kept when pasting text.
-- **Language**: Auto / 中文 / English. Currency symbol adapts: `¥` for zh, `$` for en.
+- **Language**: Auto / 中文 / English. 
 
 ## Installation
 
