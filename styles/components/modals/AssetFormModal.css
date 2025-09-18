@@ -1,0 +1,142 @@
+/* AssetFormModal 表单模态框样式 */
+
+.asset-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #F5F6FA;
+}
+
+.form-group input,
+.form-group textarea {
+  background: #2A2D36;
+  border: 1px solid #3A3D46;
+  border-radius: 8px;
+  padding: 12px;
+  color: #F5F6FA;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #f3e700;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.form-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.form-btn-primary {
+  background: #f3e700;
+  color: #181A20;
+}
+
+.form-btn-primary:hover {
+  background: #e6d000;
+}
+
+.form-btn-secondary {
+  background: #3A3D46;
+  color: #F5F6FA;
+}
+
+.form-btn-secondary:hover {
+  background: #4A4D56;
+}
+
+.form-btn:active {
+  transform: scale(0.95);
+}
+
+/* 资产表单弹窗：压缩高度与排版 */
+.asset-form-modal .date-picker-content {
+  padding: 16px;
+  gap: 12px;
+}
+.asset-form-modal .asset-form {
+  gap: 12px;
+}
+.asset-form-modal .form-group {
+  gap: 6px;
+}
+
+/* 危险按钮（删除） */
+.form-btn-danger {
+  background: #7a1e1e;
+  color: #fff;
+}
+.form-btn-danger:hover {
+  background: #992525;
+}
+
+/* 标签 chips 更高区分度 */
+.tags-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  background: #2A2D36;
+  border: 1px solid #3A3D46;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+.tags-input input {
+  flex: 1;
+  min-width: 120px;
+  background: transparent;
+  color: #F5F6FA;
+  border: none;
+  outline: none;
+  padding: 6px 4px;
+}
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(243, 231, 0, 0.15);
+  color: #F5F6FA;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  border: 1px solid rgba(243, 231, 0, 0.35);
+}
+.tag-chip .remove {
+  background: transparent;
+  color: #FFD600;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 0 0 2px;
+}

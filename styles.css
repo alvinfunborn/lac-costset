@@ -1,0 +1,969 @@
+/* 基础样式和全局设置 */
+body, .page-root {
+  background: var(--background-primary);
+  color: #F5F6FA;
+  min-height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+/* 隐藏页面整体滚动条 */
+body::-webkit-scrollbar, .page-root::-webkit-scrollbar {
+  width: 0px !important;
+  background: transparent !important;
+}
+
+body::-webkit-scrollbar-track, .page-root::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+body::-webkit-scrollbar-thumb, .page-root::-webkit-scrollbar-thumb {
+  background: transparent !important;
+}
+
+/* 通用按钮样式 */
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  &:active {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+}
+
+/* 通用交互元素样式 */
+.top-card-date, .actionbar-import, .actionbar-export, .actionbar-sync, .actionbar-add, .panel-btn, .action-btn-add, .actionbar-searchbox-close, .search-history-item, .action-btn, .actionbar-search, .actionbar-sort, .action-bar Text, .top-card-label, .top-summary-panel-label, .top-summary-panel-actions Text {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  &:active {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+  transition: all 0.1s ease;
+}
+
+/* TopSummary 顶部统计区域样式 */
+
+.top-summary {
+  background: #23262F;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  margin-top: 8px;
+  margin-bottom: 8px;
+  margin-left: 14px;
+  margin-right: 14px;
+  padding: 12px 0 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.top-summary-numbers {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0 24px;
+}
+
+.top-summary-daily {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  flex: 1;
+}
+
+.top-summary-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex: 1;
+}
+
+.top-summary-date {
+  color: #f3e700;
+  font-size: 12px;
+}
+
+.top-summary-date.clickable {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.top-summary-date.clickable:hover {
+  opacity: 0.8;
+}
+
+.top-summary-date.clickable:active {
+  opacity: 0.6;
+  transform: scale(0.95);
+}
+
+.top-summary-dailycost {
+  color: #f3e700;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.top-summary-meta {
+  color: #A0A3B1;
+  font-size: 12px;
+}
+
+.top-summary-totalcost {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: right;
+}
+
+.top-summary-labels {
+  padding: 0 24px;
+}
+
+.top-summary-chart {
+  width: 100%;
+  height: 20px;
+  margin-top: 8px;
+}
+
+.top-summary-chart canvas {
+  width: 100%;
+  height: 20px;
+  display: block;
+}
+
+/* 日期选择器弹窗样式 */
+.date-picker-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.date-picker-modal {
+  background: #23262F;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  padding: 0;
+  max-width: 400px;
+  width: 90%;
+  animation: datePickerSlideIn 0.2s ease-out;
+}
+
+@keyframes datePickerSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.date-picker-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.date-picker-title {
+  color: #F5F6FA;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+/* 三列滚轮选择器样式 */
+.date-wheel-container {
+  display: flex;
+  flex-direction: row;
+  height: 280px;
+  background: #2A2D36;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.date-wheel-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.date-wheel-column:not(:last-child) {
+  border-right: 1px solid #3A3D46;
+}
+
+.date-wheel-items {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  padding: 120px 0; /* 上下留白，让选中项居中 */
+}
+
+.date-wheel-items::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.date-wheel-item {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #A0A3B1;
+  transition: color 0.2s ease;
+  cursor: pointer;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE and Edge */
+  user-select: none;
+}
+
+.date-wheel-item.selected {
+  color: #F5F6FA;
+  font-weight: 600;
+}
+
+/* 选中项高亮效果 */
+.date-wheel-column::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: rgba(243, 231, 0, 0.1);
+  border-top: 1px solid rgba(243, 231, 0, 0.3);
+  border-bottom: 1px solid rgba(243, 231, 0, 0.3);
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.date-wheel-item.selected {
+  position: relative;
+  z-index: 2;
+}
+
+.date-picker-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.date-picker-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 80px;
+}
+
+.date-picker-btn:active {
+  transform: scale(0.95);
+}
+
+.date-picker-btn-cancel {
+  background: #3A3D46;
+  color: #F5F6FA;
+}
+
+.date-picker-btn-cancel:hover {
+  background: #4A4D56;
+}
+
+.date-picker-btn-confirm {
+  background: #f3e700;
+  color: #181A20;
+}
+
+.date-picker-btn-confirm:hover {
+  background: #e6d000;
+}
+
+/* TagPanel 标签面板样式 */
+
+.top-summary-labels {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin-bottom: -4px;
+  max-height: 48px;
+  overflow-y: auto;
+}
+
+.top-summary-labels::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.top-summary-labels::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.top-summary-labels::-webkit-scrollbar-thumb {
+  background: #A0A3B1;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.top-summary-labels:hover::-webkit-scrollbar-thumb {
+  opacity: 0.6;
+}
+
+.top-summary-labels::-webkit-scrollbar-thumb:hover {
+  opacity: 1;
+}
+
+.top-summary-label {
+  background: #2A2D36;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  color: #A0A3B1;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  border: 1px solid transparent;
+  font-weight: 500;
+  box-sizing: border-box;
+  min-height: 18px;
+  display: inline-block;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.top-summary-label.selected {
+  background: #f3e700;
+  color: #181A20;
+}
+
+/* 标签选择面板样式 */
+.top-summary-panel-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.top-summary-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #23262F;
+  border-radius: 12px;
+  padding: 16px;
+  width: 380px;
+  max-width: 90vw;
+  max-height: 60vh;
+  min-height: 320px;
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 10000;
+}
+
+.top-summary-panel-search {
+  width: 100%;
+  background: #2A2D36;
+  border: 1px solid #3A3D46;
+  border-radius: 8px;
+  padding: 12px;
+  color: #F5F6FA;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 16px;
+}
+
+.top-summary-panel-search:focus {
+  border-color: #f3e700;
+}
+
+.top-summary-panel-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 4px;
+  align-items: flex-start;        /* 防止单个标签被拉伸为整列高度 */
+  align-content: flex-start;      /* 多行时从顶部开始堆叠，不平均分布拉伸 */
+}
+
+.top-summary-panel-label {
+  background: #2A2D36;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #A0A3B1;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.top-summary-panel-label.selected {
+  background: #f3e700;
+  color: #181A20;
+}
+
+.top-summary-panel-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.panel-btn {
+  padding: 8px 16px;
+  background: #3A3D46;
+  color: #F5F6FA;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.panel-btn:hover {
+  background: #4A4D56;
+}
+
+/* AssetManagerView 主视图样式 */
+
+/* 操作栏样式 */
+.action-bar {
+  background: #23262F;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  padding: 8px 32px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.action-mainmenu {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.action-icon {
+  flex: 1;
+  text-align: center;
+}
+
+/* 搜索按钮 */
+.actionbar-search {
+  background-image: url('data:image/svg+xml;utf8,<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="15" r="9" stroke="%23eee" stroke-width="4"/><line x1="22" y1="22" x2="28" y2="28" stroke="%23eee" stroke-width="4" stroke-linecap="round"/></svg>');
+  background-size: 48px 48px;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.actionbar-search:active, .actionbar-search:focus {
+  background: inherit;
+  color: inherit;
+  outline: none;
+}
+
+/* 排序按钮 */
+.actionbar-sort {
+  background-image: url('data:image/svg+xml;utf8,<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="10,20 16,26 22,20" stroke="%23eee" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polyline points="10,12 16,6 22,12" stroke="%23eee" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  background-size: 48px 48px;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.actionbar-sort:active, .actionbar-sort:focus {
+  background: inherit;
+  color: inherit;
+  outline: none;
+}
+
+/* 添加按钮 */
+.actionbar-add {
+  margin: 16px;
+  background-image: url('data:image/svg+xml;utf8,<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="16" y1="6" x2="16" y2="26" stroke="%23eee" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="16" x2="26" y2="16" stroke="%23eee" stroke-width="2" stroke-linecap="round"/></svg>');
+  background-size: 96px 96px;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionbar-add:active, .actionbar-add:focus {
+  background: inherit;
+  color: inherit;
+  outline: none;
+}
+
+/* 导入导出同步按钮 */
+.actionbar-import, .actionbar-export, .actionbar-sync {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 12px;
+  cursor: pointer;
+  background-color: transparent;
+  opacity: 0.7;
+}
+
+.actionbar-import {
+  background-size: 32px 32px;
+  background-image: url('data:image/svg+xml;utf8,<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="24" width="20" height="2" rx="1" fill="%23bbb"/><path d="M16 6v14" stroke="%23bbb" stroke-width="2.5" stroke-linecap="round"/><path d="M11 15l5 5 5-5" stroke="%23bbb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+}
+
+.actionbar-export {
+  background-size: 32px 32px;
+  background-image: url('data:image/svg+xml;utf8,<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="6" width="20" height="2" rx="1" fill="%23bbb"/><path d="M16 26V12" stroke="%23bbb" stroke-width="2.5" stroke-linecap="round"/><path d="M21 17l-5-5-5 5" stroke="%23bbb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+}
+
+.actionbar-sync {
+  background-size: 64px 64px;
+  background-image: url('data:image/svg+xml;utf8,<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 12l4-4 4 4" stroke="%23bbb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8v8" stroke="%23bbb" stroke-width="2.5" stroke-linecap="round"/><path d="M24 20l-4 4-4-4" stroke="%23bbb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 24v-8" stroke="%23bbb" stroke-width="2.5" stroke-linecap="round"/></svg>');
+}
+
+/* 资产容器 */
+.assets-container {
+  overflow-y: auto;
+  flex: 1;
+  padding: 0 14px;
+  padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
+  margin-bottom: 80px;
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+/* 隐藏资产列表滚动条 */
+.assets-container::-webkit-scrollbar {
+  width: 0px !important;
+  background: transparent !important;
+}
+
+.assets-container::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.assets-container::-webkit-scrollbar-thumb {
+  background: transparent !important;
+}
+
+
+/* 搜索框样式 */
+.actionbar-searchbox {
+  background: #23262F;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  padding: 16px 32px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-bottom: 16px;
+}
+
+.actionbar-searchbox-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 56px;
+}
+
+.actionbar-searchbox-input {
+  flex: 1;
+  background: transparent;
+  color: #eee;
+  font-size: 16px;
+  border: none;
+  outline: none;
+}
+
+.actionbar-searchbox-close {
+  font-size: 16px;
+  color: #888;
+  margin-left: 16px;
+  cursor: pointer;
+  &:active {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+  transition: all 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.search-history {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.search-history-item {
+  background: #2A2D36;
+  color: #eee;
+  border-radius: 12px;
+  padding: 6px 16px;
+  font-size: 12px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+/* 表单样式 */
+.actionbar-form {
+  background: #23262F;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  padding: 16px 32px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-bottom: 16px;
+}
+
+/* AssetCard 资产卡片样式 */
+
+.asset-card {
+  background: #23262F;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.asset-card.hidden {
+  opacity: 0.3;
+  filter: grayscale(0.5);
+  background: #23262F !important;
+  transition: opacity 0.2s, filter 0.2s;
+  text-decoration: line-through;
+}
+
+.asset-card--expired {
+  opacity: 0.7;
+  filter: grayscale(0.8);
+  background: #23262F !important;
+  font-style: italic;
+  transition: opacity 0.2s, filter 0.2s;
+}
+
+.asset-info {
+  flex: 1;
+  min-width: 0;
+  gap: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.asset-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.asset-date {
+  font-size: 10px;
+  color: #A0A3B1;
+  margin-left: 4px;
+}
+
+.asset-labels-scroll {
+  white-space: nowrap;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.asset-costs-line {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.asset-costs {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-end;
+}
+
+.asset-price {
+  font-size: 10px;
+  color: #A0A3B1;
+  text-align: right;
+}
+
+.asset-dailycost {
+  color: #f3e700;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.tag {
+  display: inline-block;
+  background: #2A2D36;
+  color: #A0A3B1;
+  border-radius: 8px;
+  font-size: 8px;
+  padding: 2px 8px;
+  margin-right: 6px;
+  margin-bottom: 2px;
+}
+
+/* AssetFormModal 表单模态框样式 */
+
+.asset-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #F5F6FA;
+}
+
+.form-group input,
+.form-group textarea {
+  background: #2A2D36;
+  border: 1px solid #3A3D46;
+  border-radius: 8px;
+  padding: 12px;
+  color: #F5F6FA;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #f3e700;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.form-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.form-btn-primary {
+  background: #f3e700;
+  color: #181A20;
+}
+
+.form-btn-primary:hover {
+  background: #e6d000;
+}
+
+.form-btn-secondary {
+  background: #3A3D46;
+  color: #F5F6FA;
+}
+
+.form-btn-secondary:hover {
+  background: #4A4D56;
+}
+
+.form-btn:active {
+  transform: scale(0.95);
+}
+
+/* 资产表单弹窗：压缩高度与排版 */
+.asset-form-modal .date-picker-content {
+  padding: 16px;
+  gap: 12px;
+}
+.asset-form-modal .asset-form {
+  gap: 12px;
+}
+.asset-form-modal .form-group {
+  gap: 6px;
+}
+
+/* 危险按钮（删除） */
+.form-btn-danger {
+  background: #7a1e1e;
+  color: #fff;
+}
+.form-btn-danger:hover {
+  background: #992525;
+}
+
+/* 标签 chips 更高区分度 */
+.tags-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  background: #2A2D36;
+  border: 1px solid #3A3D46;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+.tags-input input {
+  flex: 1;
+  min-width: 120px;
+  background: transparent;
+  color: #F5F6FA;
+  border: none;
+  outline: none;
+  padding: 6px 4px;
+}
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(243, 231, 0, 0.15);
+  color: #F5F6FA;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  border: 1px solid rgba(243, 231, 0, 0.35);
+}
+.tag-chip .remove {
+  background: transparent;
+  color: #FFD600;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 0 0 2px;
+}
+/* LacCostSetSettingTab 设置组件样式 */
+
+.setting-item {
+  margin-bottom: 16px;
+}
+
+.setting-item .setting-item-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #F5F6FA;
+  margin-bottom: 4px;
+}
+
+.setting-item .setting-item-description {
+  font-size: 12px;
+  color: #A0A3B1;
+  margin-bottom: 8px;
+}
+
+.setting-item input[type="text"],
+.setting-item input[type="checkbox"] {
+  background: #2A2D36;
+  border: 1px solid #3A3D46;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #F5F6FA;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.setting-item input[type="text"]:focus {
+  border-color: #f3e700;
+}
+
+.setting-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #f3e700;
+}
+
+.setting-item .setting-item-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.setting-item .setting-item-control label {
+  font-size: 14px;
+  color: #F5F6FA;
+  cursor: pointer;
+}
+

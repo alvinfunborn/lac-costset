@@ -1,0 +1,52 @@
+/* 基础样式和全局设置 */
+body, .page-root {
+  background: var(--background-primary);
+  color: #F5F6FA;
+  min-height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+/* 隐藏页面整体滚动条 */
+body::-webkit-scrollbar, .page-root::-webkit-scrollbar {
+  width: 0px !important;
+  background: transparent !important;
+}
+
+body::-webkit-scrollbar-track, .page-root::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+body::-webkit-scrollbar-thumb, .page-root::-webkit-scrollbar-thumb {
+  background: transparent !important;
+}
+
+/* 通用按钮样式 */
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  &:active {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+}
+
+/* 通用交互元素样式 */
+.top-card-date, .actionbar-import, .actionbar-export, .actionbar-sync, .actionbar-add, .panel-btn, .action-btn-add, .actionbar-searchbox-close, .search-history-item, .action-btn, .actionbar-search, .actionbar-sort, .action-bar Text, .top-card-label, .top-summary-panel-label, .top-summary-panel-actions Text {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  &:active {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+  transition: all 0.1s ease;
+}

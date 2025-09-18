@@ -1,0 +1,52 @@
+/* LacCostSetSettingTab 设置组件样式 */
+
+.setting-item {
+  margin-bottom: 16px;
+}
+
+.setting-item .setting-item-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #F5F6FA;
+  margin-bottom: 4px;
+}
+
+.setting-item .setting-item-description {
+  font-size: 12px;
+  color: #A0A3B1;
+  margin-bottom: 8px;
+}
+
+.setting-item input[type="text"],
+.setting-item input[type="checkbox"] {
+  background: #2A2D36;
+  border: 1px solid #3A3D46;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #F5F6FA;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.setting-item input[type="text"]:focus {
+  border-color: #f3e700;
+}
+
+.setting-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #f3e700;
+}
+
+.setting-item .setting-item-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.setting-item .setting-item-control label {
+  font-size: 14px;
+  color: #F5F6FA;
+  cursor: pointer;
+}
