@@ -2,6 +2,7 @@ import { App, Notice } from 'obsidian';
 import { ConfirmModal } from './ConfirmModal';
 import { AssetRepository } from '../../repositories/AssetRepository';
 import { Asset } from '../../models/Asset';
+import { t } from '../../i18n';
 
 // 资产表单弹窗（复用日期/标签弹窗风格）
 export class AssetFormModal {
@@ -74,13 +75,13 @@ export class AssetFormModal {
 		const nameGroup = document.createElement('div');
 		nameGroup.className = 'form-group';
 		{
-			const lbl = this.createLabel('名称');
+			const lbl = this.createLabel(t('form.name'));
 			lbl.classList.add('label-required');
 			nameGroup.appendChild(lbl);
 		}
 		const nameInput = document.createElement('input');
 		nameInput.type = 'text';
-		nameInput.placeholder = '资产名称';
+		nameInput.placeholder = t('form.assetName.placeholder');
 		if (this.asset) nameInput.value = this.asset.name;
 		{
 			const field = document.createElement('div');
@@ -92,7 +93,7 @@ export class AssetFormModal {
 		form.appendChild(nameGroup);
 		const validateName = () => {
 			const v = (nameInput.value || '').trim();
-			if (!v) { setError(nameGroup, '请填写名称'); return false; }
+			if (!v) { setError(nameGroup, t('form.error.nameRequired')); return false; }
 			clearError(nameGroup); return true;
 		};
 		nameInput.addEventListener('input', validateName);
@@ -101,10 +102,10 @@ export class AssetFormModal {
 		// 图标
 		const iconGroup = document.createElement('div');
 		iconGroup.className = 'form-group';
-		iconGroup.appendChild(this.createLabel('图标'));
+		iconGroup.appendChild(this.createLabel(t('form.icon')));
 		const iconInput = document.createElement('input');
 		iconInput.type = 'text';
-		iconInput.placeholder = '😊请输入一个 Emoji 作为图标';
+		iconInput.placeholder = '😊' + t('form.icon.placeholder');
 		if (this.asset) iconInput.value = this.asset.icon; else {
 			try {
 				const plugin = (this.app as any).plugins?.plugins?.['lac-costset'];
@@ -133,13 +134,13 @@ export class AssetFormModal {
 		const priceGroup = document.createElement('div');
 		priceGroup.className = 'form-group';
 		{
-			const lbl = this.createLabel('价格');
+			const lbl = this.createLabel(t('form.price'));
 			lbl.classList.add('label-required');
 			priceGroup.appendChild(lbl);
 		}
 		const priceInput = document.createElement('input') as HTMLInputElement;
 		priceInput.type = 'number';
-		priceInput.placeholder = '购入价格（元）';
+		priceInput.placeholder = t('form.price.placeholder');
 		priceInput.step = '0.01';
 		if (this.asset) priceInput.value = this.asset.price.toString();
 		// 与 costsetapp 对齐：输入与失焦时净化为合法数字格式
@@ -162,7 +163,7 @@ export class AssetFormModal {
 		const validatePrice = () => {
 			const str = (priceInput.value || '').trim();
 			const num = this.parseMoney(str);
-			if (num === null) { setError(priceGroup, '请填写有效的价格'); return false; }
+			if (num === null) { setError(priceGroup, t('form.error.priceInvalid')); return false; }
 			clearError(priceGroup); return true;
 		};
 		priceInput.addEventListener('input', validatePrice);
@@ -172,14 +173,14 @@ export class AssetFormModal {
 		const fromGroup = document.createElement('div');
 		fromGroup.className = 'form-group';
 		{
-			const lbl = this.createLabel('购入于');
+			const lbl = this.createLabel(t('form.purchaseOn'));
 			lbl.classList.add('label-required');
 			fromGroup.appendChild(lbl);
 		}
 		const fromInput = document.createElement('input') as HTMLInputElement;
 		fromInput.type = 'text';
 		fromInput.readOnly = true;
-		fromInput.placeholder = '购入日期';
+		fromInput.placeholder = t('form.purchaseDate');
 		fromInput.value = this.asset ? this.formatDateLocal(this.asset.activeFrom) : '';
 		fromInput.addEventListener('click', () => {
 			this.openDatePicker(fromInput.value ? new Date(fromInput.value) : (this.asset?.activeFrom || new Date()), (picked) => {
@@ -196,7 +197,7 @@ export class AssetFormModal {
 		this.applyRowLayout(fromGroup);
 		form.appendChild(fromGroup);
 		const validateFrom = () => {
-			if (!fromInput.value) { setError(fromGroup, '请选择购入日期'); return false; }
+			if (!fromInput.value) { setError(fromGroup, t('form.error.fromRequired')); return false; }
 			clearError(fromGroup); return true;
 		};
 		fromInput.addEventListener('blur', validateFrom);
@@ -204,11 +205,11 @@ export class AssetFormModal {
 		// 结束日期
 		const toGroup = document.createElement('div');
 		toGroup.className = 'form-group';
-		toGroup.appendChild(this.createLabel('到期'));
+		toGroup.appendChild(this.createLabel(t('form.endDate')));
 		const toInput = document.createElement('input') as HTMLInputElement;
 		toInput.type = 'text';
 		toInput.readOnly = true;
-		toInput.placeholder = '(计划)报废/回收/到期时间';
+		toInput.placeholder = t('form.endDatePlaceholder');
 		toInput.value = (this.asset && this.asset.activeTo) ? this.formatDateLocal(this.asset.activeTo) : '';
 		let clearBtn: HTMLButtonElement | undefined;
 		const updateToClear = () => { if (clearBtn) clearBtn.style.display = toInput.value ? 'inline-flex' : 'none'; };
@@ -220,7 +221,7 @@ export class AssetFormModal {
 				if (fromInput.value) {
 					const fd = new Date(fromInput.value);
 					const td = new Date(toInput.value);
-					if (td.getTime() < fd.getTime()) setError(toGroup, '到期日期需不早于购入日期'); else clearError(toGroup);
+					if (td.getTime() < fd.getTime()) setError(toGroup, t('form.error.toBeforeFrom')); else clearError(toGroup);
 				}
 			});
 		});
@@ -251,10 +252,10 @@ export class AssetFormModal {
 		// 回收价格
 		const recycleGroup = document.createElement('div');
 		recycleGroup.className = 'form-group';
-		recycleGroup.appendChild(this.createLabel('回收价'));
+		recycleGroup.appendChild(this.createLabel(t('form.recyclePrice')));
 		const recycleInput = document.createElement('input') as HTMLInputElement;
 		recycleInput.type = 'number';
-		recycleInput.placeholder = '回收价格（元）';
+		recycleInput.placeholder = t('form.recycle.placeholder');
 		recycleInput.step = '0.01';
 		if (this.asset) recycleInput.value = this.asset.recyclePrice.toString();
 		recycleInput.addEventListener('input', () => sanitizeNumeric(recycleInput));
@@ -272,13 +273,13 @@ export class AssetFormModal {
 		// 标签（chips + 回车确认）
 		const tagsGroup = document.createElement('div');
 		tagsGroup.className = 'form-group';
-		tagsGroup.appendChild(this.createLabel('标签'));
+		tagsGroup.appendChild(this.createLabel(t('form.tags')));
 		let currentTags: string[] = this.asset ? [...(this.asset.tags || [])] : [];
 		const tagsWrapper = document.createElement('div');
 		tagsWrapper.className = 'tags-input';
 		const tagsInput = document.createElement('input') as HTMLInputElement;
 		tagsInput.type = 'text';
-		tagsInput.placeholder = '输入标签，回车确认';
+		tagsInput.placeholder = t('form.tags.placeholder');
 		tagsWrapper.appendChild(tagsInput);
 		{
 			const field = document.createElement('div');
@@ -289,7 +290,7 @@ export class AssetFormModal {
 		this.applyRowLayout(tagsGroup);
 		form.appendChild(tagsGroup);
 
-		const normalize = (t: string) => t.trim();
+		const normalize = (tstr: string) => tstr.trim();
 		const addTag = (raw: string) => {
 			const pieces = raw.split(/[，,\s]+/).map(normalize).filter(Boolean);
 			pieces.forEach(p => { if (!currentTags.includes(p)) currentTags.push(p); });
@@ -297,7 +298,7 @@ export class AssetFormModal {
 			tagsInput.value = '';
 		};
 		const removeTag = (value: string) => {
-			currentTags = currentTags.filter(t => t !== value);
+			currentTags = currentTags.filter(tg => tg !== value);
 			syncChips();
 		};
 		const syncChips = () => {
@@ -339,15 +340,15 @@ export class AssetFormModal {
 		actions.className = 'form-actions';
 		const cancelBtn = document.createElement('button');
 		cancelBtn.type = 'button';
-		cancelBtn.textContent = '取消';
+		cancelBtn.textContent = t('form.action.cancel');
 		cancelBtn.className = 'form-btn form-btn-secondary';
 		const deleteBtn = document.createElement('button');
 		deleteBtn.type = 'button';
-		deleteBtn.textContent = '删除';
+		deleteBtn.textContent = t('form.action.delete');
 		deleteBtn.className = 'form-btn form-btn-danger';
 		const saveBtn = document.createElement('button');
 		saveBtn.type = 'submit';
-		saveBtn.textContent = '保存';
+		saveBtn.textContent = t('form.action.save');
 		saveBtn.className = 'form-btn form-btn-primary';
 		actions.appendChild(cancelBtn);
 		if (this.asset) actions.appendChild(deleteBtn);
@@ -366,7 +367,7 @@ export class AssetFormModal {
 		if (this.asset) {
 			deleteBtn.addEventListener('click', async () => {
 				if (!this.asset) return;
-				const ok = await new ConfirmModal(`确定要删除资产 "${this.asset.name}" 吗？`, '删除', '取消', true).open();
+				const ok = await new ConfirmModal(t('view.confirmDeleteAsset', { name: this.asset.name }), t('common.delete'), t('common.cancel'), true).open();
 				if (!ok) return;
 				await this.assetRepository.deleteAsset(this.asset.id);
 				if (this.onSaved) this.onSaved();
@@ -382,9 +383,9 @@ export class AssetFormModal {
 			const priceStr = (priceInput.value || '').trim();
 			const priceNum = this.parseMoney(priceStr);
 			let valid = true;
-			if (!nameVal) { setError(nameGroup, '请填写名称'); valid = false; }
-			if (priceNum === null) { setError(priceGroup, '请填写有效的价格'); valid = false; }
-			if (!fromInput.value) { setError(fromGroup, '请选择购入日期'); valid = false; }
+			if (!nameVal) { setError(nameGroup, t('form.error.nameRequired')); valid = false; }
+			if (priceNum === null) { setError(priceGroup, t('form.error.priceInvalid')); valid = false; }
+			if (!fromInput.value) { setError(fromGroup, t('form.error.fromRequired')); valid = false; }
 			if (!valid) {
 				const firstErr = [nameGroup, priceGroup, fromGroup].find(g => g.classList.contains('has-error')) as HTMLElement | undefined;
 				if (firstErr) {
@@ -398,13 +399,13 @@ export class AssetFormModal {
 			let toDate: Date | undefined = undefined;
 			if (toInput.value) {
 				const d = new Date(toInput.value);
-				if (d.getTime() < fromDate.getTime()) { setError(toGroup, '到期日期需不早于购入日期'); (toGroup.querySelector('input') as HTMLInputElement | null)?.focus(); return; }
+				if (d.getTime() < fromDate.getTime()) { setError(toGroup, t('form.error.toBeforeFrom')); (toGroup.querySelector('input') as HTMLInputElement | null)?.focus(); return; }
 				toDate = d;
 			}
 			const recycleStr = (recycleInput.value || '').trim();
 			const recycleNum = recycleStr ? this.parseMoney(recycleStr) : 0;
-			if (recycleStr && recycleNum === null) { setError(recycleGroup, '回收价格格式不正确'); return; }
-			if ((recycleNum || 0) > priceValue) { setError(recycleGroup, '回收价不能大于价格'); return; }
+			if (recycleStr && recycleNum === null) { setError(recycleGroup, t('form.error.recycleInvalid')); return; }
+			if ((recycleNum || 0) > priceValue) { setError(recycleGroup, t('form.error.recycleGtPrice')); return; }
 
 			const assetData = {
 				id: this.asset?.id || nameVal,
@@ -422,7 +423,7 @@ export class AssetFormModal {
 				if (this.onSaved) this.onSaved();
 				close();
 			} catch (error: any) {
-				new Notice('保存失败: ' + error.message);
+				new Notice(t('notice.saveFailed', { msg: error.message }));
 			}
 		});
 	}
@@ -549,7 +550,7 @@ export class AssetFormModal {
 		// 标题
 		const title = document.createElement('div');
 		title.className = 'date-picker-title';
-		title.textContent = '选择日期';
+		title.textContent = t('date.pick');
 
 		// 三列滚轮
 		const wheelContainer = document.createElement('div');
@@ -559,13 +560,13 @@ export class AssetFormModal {
 		const currentMonth = currentDate.getMonth() + 1;
 		const currentDay = currentDate.getDate();
 
-		const yearColumn = this.createWheelColumn('年', this.generateYears(currentYear), currentYear, (year) => {
+		const yearColumn = this.createWheelColumn(t('date.year'), this.generateYears(currentYear), currentYear, (year) => {
 			this.updateDaysColumn(dayColumn, year, monthColumn.selectedValue);
 		}, false);
-		const monthColumn = this.createWheelColumn('月', this.generateMonths(), currentMonth, (month) => {
+		const monthColumn = this.createWheelColumn(t('date.month'), this.generateMonths(), currentMonth, (month) => {
 			this.updateDaysColumn(dayColumn, yearColumn.selectedValue, month);
 		}, true);
-		const dayColumn = this.createWheelColumn('日', this.generateDays(currentYear, currentMonth), currentDay, undefined, true);
+		const dayColumn = this.createWheelColumn(t('date.day'), this.generateDays(currentYear, currentMonth), currentDay, undefined, true);
 
 		wheelContainer.appendChild(yearColumn.element);
 		wheelContainer.appendChild(monthColumn.element);
@@ -576,10 +577,10 @@ export class AssetFormModal {
 		actions.className = 'date-picker-actions';
 		const cancelBtn = document.createElement('button');
 		cancelBtn.className = 'date-picker-btn date-picker-btn-cancel';
-		cancelBtn.textContent = '取消';
+		cancelBtn.textContent = t('common.cancel');
 		const confirmBtn = document.createElement('button');
 		confirmBtn.className = 'date-picker-btn date-picker-btn-confirm';
-		confirmBtn.textContent = '确定';
+		confirmBtn.textContent = t('common.confirm');
 
 		actions.appendChild(cancelBtn);
 		actions.appendChild(confirmBtn);
@@ -761,7 +762,7 @@ export class AssetFormModal {
 			newDays.forEach((day, index) => {
 				const item = document.createElement('div');
 				item.className = 'date-wheel-item';
-				item.textContent = `${day.toString().padStart(2, '0')}日`;
+				item.textContent = `${day.toString().padStart(2, '0')}${t('date.day')}`;
 				item.dataset.value = day.toString();
 				item.dataset.index = (repeat * newDays.length + index).toString();
 				item.dataset.realValue = day.toString();

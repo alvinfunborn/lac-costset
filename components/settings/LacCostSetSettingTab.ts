@@ -1,6 +1,7 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import LacCostSetPlugin from '../../main';
 import { AssetRepository } from '../../repositories/AssetRepository';
+import { t } from '../../i18n';
 
 // 设置标签
 export class LacCostSetSettingTab extends PluginSettingTab {
@@ -16,29 +17,20 @@ export class LacCostSetSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', { text: 'Lac.CostSet 设置' });
+		containerEl.createEl('h2', { text: t('settings.title') });
 		
 		// —— 格式与用法说明 ——
-		containerEl.createEl('p', { 
-			text: '重要：入口文件与资产文件的“内容格式为 TOML”，文件扩展名可为 .md。允许 # 开头的注释。唯一的非 TOML 例外是：文件正文中的 [[资产文件名]] 双链可省略引号，插件在解析时会临时为其加上引号后按 TOML 处理。除这点外，不应混入普通 Markdown 文本。',
-			cls: 'setting-item-description'
-		});
-		const entryExample = `# 入口文件最小示例\n\n# 顶部 TOML：必须满足\n# type = \"root\"\n# renders = [\"costset\"]\n\ntype = \"root\"\nrenders = [\"costset\"]\n\n# 正文：用双链列出资产文件名（不需要扩展名）\n\n[[键盘]]\n[[耳机]]\n`;
+		containerEl.createEl('p', { text: t('settings.guide.1'), cls: 'setting-item-description' });
+		const entryExample = t('settings.entry.example');
 		containerEl.createEl('pre', { text: entryExample, cls: 'setting-item-description' });
-		containerEl.createEl('p', { 
-			text: '资产文件同样是 Markdown，但内容以 TOML 字段为主（插件会保留你写的注释）。以下为最小示例：',
-			cls: 'setting-item-description'
-		});
-		const assetExample = `name = \"键盘\"\n\n[style]\nicon = \"⌨️\"\n\n[detail]\nprice = 399\nactive_from = \"2024-01-01\"\nactive_to = \"\"\nrecycle_price = 0\ntags = [\"数码\", \"键盘\"]\n`;
+		containerEl.createEl('p', { text: t('settings.asset.desc'), cls: 'setting-item-description' });
+		const assetExample = t('settings.asset.example');
 		containerEl.createEl('pre', { text: assetExample, cls: 'setting-item-description' });
-		containerEl.createEl('p', { 
-			text: '用法：在“入口文件”上右键 → 选择“用 LaC.CostSet 打开”。也可在命令面板执行“打开LaC.CostSet”（将使用下方配置的入口文件）。',
-			cls: 'setting-item-description'
-		});
+		containerEl.createEl('p', { text: t('settings.usage'), cls: 'setting-item-description' });
 
 		new Setting(containerEl)
-			.setName('入口文件')
-			.setDesc('作为资产入口的 Markdown 文件路径，例如 costset/costset.md')
+			.setName(t('settings.entryFile.name'))
+			.setDesc(t('settings.entryFile.desc'))
 			.addText(text => text
 				.setPlaceholder('costset/costset.md')
 				.setValue(this.plugin.settings.entryFile || 'costset/costset.md')
@@ -50,8 +42,8 @@ export class LacCostSetSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('启用右键菜单 “用 LaC.CostSet 打开”')
-			.setDesc('在 Markdown 文件的右键菜单中显示入口')
+			.setName(t('settings.contextMenu.name'))
+			.setDesc(t('settings.contextMenu.desc'))
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableContextMenu)
 				.onChange(async (value) => {
@@ -60,13 +52,13 @@ export class LacCostSetSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('默认排序')
-			.setDesc('打开视图时的初始排序方式')
+			.setName(t('settings.defaultSort.name'))
+			.setDesc(t('settings.defaultSort.desc'))
 			.addDropdown(drop => {
-				drop.addOption('none', '文本顺序');
-				drop.addOption('dailyDesc', '日均价格');
-				drop.addOption('priceDesc', '价格');
-				drop.addOption('dateDesc', '购入日期');
+				drop.addOption('none', t('settings.defaultSort.option.none'));
+				drop.addOption('dailyDesc', t('settings.defaultSort.option.dailyDesc'));
+				drop.addOption('priceDesc', t('settings.defaultSort.option.priceDesc'));
+				drop.addOption('dateDesc', t('settings.defaultSort.option.dateDesc'));
 				drop.setValue(this.plugin.settings.defaultSort || 'none');
 				drop.onChange(async (value) => {
 					const v = (value as any) as 'none' | 'dailyDesc' | 'priceDesc' | 'dateDesc';
@@ -76,15 +68,15 @@ export class LacCostSetSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
-			.setName('默认图标')
-			.setDesc('新资产的默认图标，仅支持 1 个 Emoji')
+			.setName(t('settings.defaultIcon.name'))
+			.setDesc(t('settings.defaultIcon.desc'))
 			.addText(text => {
 				const sanitizeToFirstEmoji = (input: string): string => {
 					const m = (input || '').match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/);
 					return m ? m[0] : '';
 				};
 				text
-					.setPlaceholder('📦')
+					.setPlaceholder(t('settings.defaultIcon.placeholder'))
 					.setValue(this.plugin.settings.defaultIcon)
 					.onChange(async (value) => {
 						const first = sanitizeToFirstEmoji(value);
@@ -105,6 +97,24 @@ export class LacCostSetSettingTab extends PluginSettingTab {
 						}, 0);
 					});
 				}
+			});
+
+		// 语言设置
+		new Setting(containerEl)
+			.setName(t('settings.locale.name'))
+			.setDesc(t('settings.locale.desc'))
+			.addDropdown(drop => {
+				// 语言选项使用自我描述：中文/English
+				drop.addOption('auto', t('settings.locale.option.auto'));
+				drop.addOption('zh', '中文');
+				drop.addOption('en', 'English');
+				drop.setValue(this.plugin.settings.locale || 'auto');
+				drop.onChange(async (value) => {
+					this.plugin.settings.locale = (value as any);
+					await this.plugin.saveSettings();
+					// 立即刷新当前设置页，应用语言
+					this.display();
+				});
 			});
 	}
 }

@@ -15,6 +15,7 @@ export class TagPanel {
 	private panelEl?: HTMLElement;
 	private labelsEl?: HTMLElement;
 	private searchEl?: HTMLInputElement;
+    // i18n 延后加载，避免硬依赖：使用动态导入
 
 	constructor(containerEl: HTMLElement, props: TagPanelProps) {
 		this.containerEl = containerEl;
@@ -102,7 +103,7 @@ export class TagPanel {
 		if (!this.searchEl) {
 			this.searchEl = this.panelEl.createEl('input', {
 				cls: 'top-summary-panel-search',
-				placeholder: '搜索标签',
+				placeholder: (require('../i18n') as any)?.t?.('tags.search.placeholder') || '搜索标签',
 				type: 'text'
 			}) as HTMLInputElement;
 			this.searchEl.addEventListener('input', () => {
@@ -146,13 +147,13 @@ export class TagPanel {
 			actionsEl = this.panelEl.createDiv('top-summary-panel-actions');
 			actionsEl.style.padding = '8px 16px 12px 16px';
 			const selectAllBtn = actionsEl.createSpan('panel-btn');
-			selectAllBtn.textContent = '全选';
+			selectAllBtn.textContent = (require('../i18n') as any)?.t?.('tags.selectAll') || '全选';
 			selectAllBtn.addEventListener('click', () => {
 				this.panelSelected = [...this.props.tags];
 				this.renderSelectionPanel();
 			});
 			const deselectAllBtn = actionsEl.createSpan('panel-btn');
-			deselectAllBtn.textContent = '取消全选';
+			deselectAllBtn.textContent = (require('../i18n') as any)?.t?.('tags.deselectAll') || '取消全选';
 			deselectAllBtn.addEventListener('click', () => {
 				this.panelSelected = [];
 				this.renderSelectionPanel();

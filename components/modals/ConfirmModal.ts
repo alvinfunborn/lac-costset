@@ -29,7 +29,13 @@ export class ConfirmModal {
 
             const title = document.createElement('div');
             title.className = 'date-picker-title';
-            title.textContent = '确认操作';
+            // 标题随语言
+            try {
+                const { t } = require('../../i18n');
+                title.textContent = t('confirm.title');
+            } catch (_) {
+                title.textContent = '确认操作';
+            }
 
             const msgEl = document.createElement('div');
             msgEl.className = 'confirm-message';

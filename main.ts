@@ -1,5 +1,6 @@
 import { App, Plugin, TFile, Notice } from 'obsidian';
 import { LacCostSetSettings, DEFAULT_SETTINGS } from './types';
+import { setLocale, resolveLocale, t } from './i18n';
 import { AssetRepository } from './repositories/AssetRepository';
 import { AssetManagerView } from './components/AssetManagerView';
 import { AssetFormModal } from './components/modals/AssetFormModal';
@@ -13,6 +14,9 @@ export default class LacCostSetPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+		// 初始化语言
+		setLocale(this.settings.locale || 'auto');
 
 		// 初始化AssetRepository（使用设置中的入口文件路径）
 		this.assetRepository = new AssetRepository(this.app, this.settings.entryFile || 'costset/costset.md');
@@ -32,7 +36,7 @@ export default class LacCostSetPlugin extends Plugin {
 				if (file instanceof TFile && file.extension === 'md') {
 					menu.addItem((item) => {
 						item
-							.setTitle('用 LaC.CostSet 打开')
+							.setTitle(t('menu.openWith'))
 							.setIcon('package')
 							.onClick(() => {
 								// 使用 setViewState 打开视图，确保显示标准标题栏与导航
@@ -52,7 +56,7 @@ export default class LacCostSetPlugin extends Plugin {
 		// 删除其他命令，仅保留“打开LaC.CostSet”
 		this.addCommand({
 			id: 'open-lac-costset',
-			name: '打开LaC.CostSet',
+			name: t('command.open'),
 			callback: async () => {
 				const entryPath = this.settings.entryFile || 'costset/costset.md';
 				const ensureFolderExists = async (folderPath: string) => {
@@ -134,7 +138,7 @@ export default class LacCostSetPlugin extends Plugin {
 				} catch (_) {
 					invalid = true;
 				}
-				if (invalid) new Notice('入口文件内容格式不正确：需为 TOML，且 type = "root"，renders 必须包含 "costset"');
+				if (invalid) new Notice(t('notice.invalidEntry'));
 
 				// 3) 使用配置的入口文件打开 LaC.CostSet 视图（通过 setViewState 确保标准导航）
 				this.assetRepository = new AssetRepository(this.app, entryPath);
@@ -166,5 +170,7 @@ export default class LacCostSetPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+		// 保存同时刷新语言（以便设置切换即时生效）
+		setLocale(this.settings.locale || 'auto');
 	}
 }

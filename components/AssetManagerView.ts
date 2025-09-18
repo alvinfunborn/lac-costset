@@ -6,6 +6,7 @@ import { Asset } from '../models/Asset';
 import { TopSummary, TopSummaryProps } from './TopSummary';
 import { LineChart, LineChartProps } from './LineChart';
 import { TagPanel, TagPanelProps } from './TagPanel';
+import { t } from '../i18n';
 
 // 资产管理器视图
 export class AssetManagerView extends ItemView {
@@ -65,7 +66,7 @@ export class AssetManagerView extends ItemView {
 		const hint = containerEl.createDiv();
 		hint.style.padding = '16px';
 		hint.style.opacity = '0.8';
-		hint.textContent = '从文件的右键菜单中选择 “用 LaC.CostSet 打开”。';
+		hint.textContent = t('view.hint.openFromMenu');
 		return;
 
 		this.loadAssets();
@@ -95,8 +96,8 @@ export class AssetManagerView extends ItemView {
 	private showFileSelector() {
 		const { containerEl } = this;
 		containerEl.empty();
-		containerEl.createEl('h2', { text: '选择资产根文件' });
-		containerEl.createEl('p', { text: '请选择一个包含资产引用的文件作为入口' });
+		containerEl.createEl('h2', { text: t('view.selectRoot.title') });
+		containerEl.createEl('p', { text: t('view.selectRoot.desc') });
 
 		const files = this.app.vault.getMarkdownFiles();
 		const fileList = containerEl.createDiv('file-list');
@@ -136,7 +137,7 @@ export class AssetManagerView extends ItemView {
 	private renderAssetCards(assetsContainer: HTMLElement) {
 		assetsContainer.empty();
 		if (this.assets.length === 0) {
-			assetsContainer.createEl('p', { text: '暂无资产' });
+			assetsContainer.createEl('p', { text: t('view.empty') });
 			return;
 		}
 		const calcDate = this.selectedDate || new Date();
@@ -174,25 +175,25 @@ export class AssetManagerView extends ItemView {
         }
 		visibleAssets.forEach(asset => {
 			const isExpired = !!(asset.activeTo && asset.activeTo <= calcDate);
-			const endText = isExpired ? asset.activeTo!.toISOString().split('T')[0] : '至今';
+			const endText = isExpired ? asset.activeTo!.toISOString().split('T')[0] : t('view.toNow');
 			const assetEl = assetsContainer.createDiv('asset-card');
 			if (isExpired) assetEl.addClass('asset-card--expired');
 			if (asset.hidden) assetEl.addClass('hidden');
 			assetEl.innerHTML = `
 				<div class="asset-info">
 					<div class="asset-title">${asset.icon} ${asset.name}</div>
-					<div class="asset-date">已用${asset.getUsageDays(calcDate)}天 (${asset.activeFrom.toISOString().split('T')[0]} ~ ${asset.activeTo ? endText : '至今'})</div>
+					<div class="asset-date">${t('view.usedDays', { days: asset.getUsageDays(calcDate) })} (${asset.activeFrom.toISOString().split('T')[0]} ~ ${asset.activeTo ? endText : t('view.toNow')})</div>
 					<div class="asset-labels-scroll">
 						${asset.tags.map(tag => `<span class=\"tag\">${tag}</span>`).join('')}
 					</div>
 				</div>
 				<div class="asset-costs">
 					<div class="asset-costs-line">
-						<div class="asset-price">日均&nbsp;</div>
+						<div class="asset-price">${t('view.daily')}&nbsp;</div>
 						<div class="asset-dailycost">¥${asset.getDailyCost(calcDate).toFixed(2)}</div>
 					</div>
-					<div class="asset-price">价格 ¥${asset.price}</div>
-					<div class="asset-price">回收价 ¥${asset.recyclePrice}</div>
+					<div class="asset-price">${t('view.price')} ${this.getCurrencySymbol()}${asset.price}</div>
+					<div class="asset-price">${t('view.recyclePrice')} ${this.getCurrencySymbol()}${asset.recyclePrice}</div>
 				</div>
 			`;
 			let didLongPress = false;
@@ -227,7 +228,7 @@ export class AssetManagerView extends ItemView {
 			assetEl.addEventListener('touchend', cancelPress);
 			assetEl.addEventListener('contextmenu', async (e) => {
 				e.preventDefault();
-				const ok = await new ConfirmModal(`确定要删除资产 "${asset.name}" 吗？`, '删除', '取消', true).open();
+				const ok = await new ConfirmModal(t('view.confirmDeleteAsset', { name: asset.name }), t('common.delete'), t('common.cancel'), true).open();
 				if (!ok) return;
 				await this.assetRepository.deleteAsset(asset.id);
 				this.loadAssets();
@@ -254,7 +255,7 @@ export class AssetManagerView extends ItemView {
 		this.actionBarEl = bar;
 
 		// 窄屏返回按钮（避免系统标题栏隐藏时无处返回）
-		const backBtn = bar.createDiv({ cls: 'lac-icon-btn back', attr: { title: '返回' } });
+		const backBtn = bar.createDiv({ cls: 'lac-icon-btn back', attr: { title: t('view.back') } });
 		backBtn.innerHTML = this.svgBack();
 		backBtn.addEventListener('click', (e) => {
 			e.preventDefault();
@@ -264,9 +265,9 @@ export class AssetManagerView extends ItemView {
 
 		// 左侧：搜索输入（内嵌图标按钮）
 		const searchWrap = bar.createDiv('lac-actionbar-search');
-		const searchIconBtn = searchWrap.createEl('button', { cls: 'lac-icon-btn search-icon', attr: { type: 'button', 'aria-label': '搜索' } });
+		const searchIconBtn = searchWrap.createEl('button', { cls: 'lac-icon-btn search-icon', attr: { type: 'button', 'aria-label': t('view.search.aria') } });
 		searchIconBtn.innerHTML = this.svgSearch();
-		const searchInput = searchWrap.createEl('input', { attr: { type: 'text', placeholder: '搜索名称或标签' } }) as HTMLInputElement;
+		const searchInput = searchWrap.createEl('input', { attr: { type: 'text', placeholder: t('view.search.placeholder') } }) as HTMLInputElement;
 		if (this.searchQuery) searchInput.value = this.searchQuery;
 		searchIconBtn.addEventListener('click', () => searchInput.focus());
 		searchInput.addEventListener('input', () => {
@@ -275,17 +276,17 @@ export class AssetManagerView extends ItemView {
 		});
 
 		// 右侧：操作按钮区（排序、添加）
-        const actions = bar.createDiv('lac-actionbar-actions');
-        const sortBtn = actions.createDiv({ cls: 'lac-icon-btn sort', attr: { title: '排序' } });
+		const actions = bar.createDiv('lac-actionbar-actions');
+		const sortBtn = actions.createDiv({ cls: 'lac-icon-btn sort', attr: { title: t('view.sort.title') } });
 		sortBtn.innerHTML = this.svgSort();
 		const applySortBtnState = () => {
 			sortBtn.classList.toggle('active', this.sortMode !== 'none');
 			sortBtn.setAttr('data-mode', this.sortMode);
 			sortBtn.setAttr('aria-pressed', String(this.sortMode !== 'none'));
-            const title = this.sortMode === 'dailyDesc' ? '按日均成本 (降序)'
-                : this.sortMode === 'priceDesc' ? '按价格 (降序)'
-                : this.sortMode === 'dateDesc' ? '按购入日期 (降序)'
-                : '排序';
+			const title = this.sortMode === 'dailyDesc' ? t('view.sort.title.dailyDesc')
+				: this.sortMode === 'priceDesc' ? t('view.sort.title.priceDesc')
+				: this.sortMode === 'dateDesc' ? t('view.sort.title.dateDesc')
+				: t('view.sort.title');
             sortBtn.setAttr('title', title);
 		};
 		applySortBtnState();
@@ -298,7 +299,7 @@ export class AssetManagerView extends ItemView {
             });
         });
 
-		const addBtn = actions.createDiv({ cls: 'lac-icon-btn add', attr: { title: '添加' } });
+		const addBtn = actions.createDiv({ cls: 'lac-icon-btn add', attr: { title: t('view.add') } });
 		addBtn.innerHTML = this.svgPlus();
 		addBtn.addEventListener('click', () => {
 			new AssetFormModal(this.app, this.assetRepository, undefined, () => this.loadAssets()).open();
@@ -395,9 +396,9 @@ export class AssetManagerView extends ItemView {
             return item;
         };
 
-        menu.appendChild(buildItem('按日均成本', 'dailyDesc'));
-        menu.appendChild(buildItem('按价格', 'priceDesc'));
-        menu.appendChild(buildItem('按购入日期', 'dateDesc'));
+		menu.appendChild(buildItem(t('view.sort.menu.dailyDesc'), 'dailyDesc'));
+		menu.appendChild(buildItem(t('view.sort.menu.priceDesc'), 'priceDesc'));
+		menu.appendChild(buildItem(t('view.sort.menu.dateDesc'), 'dateDesc'));
 
         document.body.appendChild(menu);
         // 定位到按钮下方
@@ -596,6 +597,11 @@ export class AssetManagerView extends ItemView {
 		this.renderChartWithProgressiveRefinement(filteredActiveAssets);
 		
 		console.log('顶部统计区域已创建:', topSummaryEl);
+	}
+
+	private getCurrencySymbol(): string {
+		const { t } = require('../i18n');
+		return t('currency.symbol');
 	}
 
 	// 渐进式细化渲染（参考costsetapp实现）

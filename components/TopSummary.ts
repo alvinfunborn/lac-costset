@@ -1,5 +1,6 @@
 import { Asset } from '../models/Asset';
 import { TagPanel, TagPanelProps } from './TagPanel';
+import { t } from '../i18n';
 
 export interface TopSummaryProps {
 	totalDailyCost: number;
@@ -62,22 +63,22 @@ export class TopSummary {
 			this.showDatePicker();
 		});
 		const dailyCostEl = dailyEl.createDiv('top-summary-dailycost');
-		dailyCostEl.textContent = `¥${this.props.totalDailyCost.toFixed(2)}`;
+		dailyCostEl.textContent = `${this.getCurrencySymbol()}${this.props.totalDailyCost.toFixed(2)}`;
 
 		// 右侧汇总
 		const summaryEl = numbersEl.createDiv('top-summary-summary');
 		
 		const totalEl = summaryEl.createDiv('top-summary-total');
 		const totalMetaEl = totalEl.createSpan('top-summary-meta');
-		totalMetaEl.textContent = '总成本 ';
+		totalMetaEl.textContent = t('top.total');
 		const totalCostEl = totalEl.createSpan('top-summary-totalcost');
-		totalCostEl.textContent = `¥${this.props.totalCost.toLocaleString()}`;
+		totalCostEl.textContent = `${this.getCurrencySymbol()}${this.props.totalCost.toLocaleString()}`;
 
 		const recycleEl = summaryEl.createDiv('top-summary-total');
 		const recycleMetaEl = recycleEl.createSpan('top-summary-meta');
-		recycleMetaEl.textContent = '可回收 ';
+		recycleMetaEl.textContent = t('top.recycle');
 		const recycleCostEl = recycleEl.createSpan('top-summary-totalcost');
-		recycleCostEl.textContent = `¥${this.props.totalRecycle.toLocaleString()}`;
+		recycleCostEl.textContent = `${this.getCurrencySymbol()}${this.props.totalRecycle.toLocaleString()}`;
 	}
 
 	private renderLabels(): void {
@@ -90,6 +91,10 @@ export class TopSummary {
 		};
 		this.tagPanelComponent = new TagPanel(labelsEl, panelProps);
 		this.tagPanelComponent.render();
+	}
+
+	private getCurrencySymbol(): string {
+		return t('currency.symbol');
 	}
 
 	private renderChart(): void {
@@ -264,14 +269,14 @@ export class TopSummary {
 		this.props.totalRecycle = totalRecycle;
 
 		const daily = this.containerEl.querySelector('.top-summary-dailycost') as HTMLElement | null;
-		if (daily) daily.textContent = `¥${totalDailyCost.toFixed(2)}`;
+		if (daily) daily.textContent = `${this.getCurrencySymbol()}${totalDailyCost.toFixed(2)}`;
 
 		const totals = this.containerEl.querySelectorAll('.top-summary-totalcost');
 		if (totals && totals.length > 0) {
 			const totalEl = totals[0] as HTMLElement;
-			if (totalEl) totalEl.textContent = `¥${totalCost.toLocaleString()}`;
+			if (totalEl) totalEl.textContent = `${this.getCurrencySymbol()}${totalCost.toLocaleString()}`;
 			const recycleEl = totals[1] as HTMLElement | undefined as any;
-			if (recycleEl) (recycleEl as HTMLElement).textContent = `¥${totalRecycle.toLocaleString()}`;
+			if (recycleEl) (recycleEl as HTMLElement).textContent = `${this.getCurrencySymbol()}${totalRecycle.toLocaleString()}`;
 		}
 	}
 
@@ -292,7 +297,7 @@ export class TopSummary {
 		// 创建标题
 		const title = document.createElement('div');
 		title.className = 'date-picker-title';
-		title.textContent = '选择日期';
+		title.textContent = t('date.pick');
 		
 		// 创建三列滚轮选择器
 		const wheelContainer = document.createElement('div');
@@ -305,17 +310,17 @@ export class TopSummary {
 		const currentDay = currentDate.getDate();
 		
 		// 创建年份列（不循环）
-		const yearColumn = this.createWheelColumn('年', this.generateYears(currentYear), currentYear, (year) => {
+		const yearColumn = this.createWheelColumn(t('date.year'), this.generateYears(currentYear), currentYear, (year) => {
 			this.updateDaysColumn(dayColumn, year, monthColumn.selectedValue);
 		}, false);
-		
+
 		// 创建月份列（循环滚动）
-		const monthColumn = this.createWheelColumn('月', this.generateMonths(), currentMonth, (month) => {
+		const monthColumn = this.createWheelColumn(t('date.month'), this.generateMonths(), currentMonth, (month) => {
 			this.updateDaysColumn(dayColumn, yearColumn.selectedValue, month);
 		}, true);
-		
+
 		// 创建日期列（循环滚动）
-		const dayColumn = this.createWheelColumn('日', this.generateDays(currentYear, currentMonth), currentDay, undefined, true);
+		const dayColumn = this.createWheelColumn(t('date.day'), this.generateDays(currentYear, currentMonth), currentDay, undefined, true);
 		
 		wheelContainer.appendChild(yearColumn.element);
 		wheelContainer.appendChild(monthColumn.element);
@@ -327,11 +332,11 @@ export class TopSummary {
 		
 		const cancelBtn = document.createElement('button');
 		cancelBtn.className = 'date-picker-btn date-picker-btn-cancel';
-		cancelBtn.textContent = '取消';
+		cancelBtn.textContent = t('common.cancel');
 		
 		const confirmBtn = document.createElement('button');
 		confirmBtn.className = 'date-picker-btn date-picker-btn-confirm';
-		confirmBtn.textContent = '确定';
+		confirmBtn.textContent = t('common.confirm');
 		
 		// 组装结构
 		actions.appendChild(cancelBtn);
