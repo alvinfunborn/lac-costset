@@ -121,8 +121,9 @@
   overflow-y: auto;
   flex: 1;
   padding: 0 14px;
-  padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
-  margin-bottom: 80px;
+  /* 缩小底部留白，避免在窄屏出现大空隙 */
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  margin-bottom: 12px;
   scrollbar-width: none !important; /* Firefox */
   -ms-overflow-style: none !important; /* IE and Edge */
 }

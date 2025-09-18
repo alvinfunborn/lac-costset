@@ -207,6 +207,7 @@ export class AssetManagerView extends ItemView {
 			let didLongPress = false;
 			let isTouchActive = false;
 			let lastTouchTime = 0;
+			let lastPointerType: string = '';
 			assetEl.addEventListener('click', (e) => {
 				if (didLongPress) {
 					didLongPress = false;
@@ -232,21 +233,15 @@ export class AssetManagerView extends ItemView {
 			};
 			const cancelPress = () => { if (pressTimer) { window.clearTimeout(pressTimer); pressTimer = null; } };
 			assetEl.addEventListener('mousedown', startPress);
+			assetEl.addEventListener('pointerdown', (pev: PointerEvent) => { lastPointerType = (pev as any).pointerType || ''; });
 			const onTouchStart = (ev: TouchEvent) => { isTouchActive = true; lastTouchTime = Date.now(); startPress(ev); };
 			assetEl.addEventListener('touchstart', onTouchStart, { passive: true } as any);
 			assetEl.addEventListener('mouseup', cancelPress);
 			assetEl.addEventListener('mouseleave', cancelPress);
 			const onTouchEnd = () => { isTouchActive = false; cancelPress(); };
 			assetEl.addEventListener('touchend', onTouchEnd);
-			assetEl.addEventListener('contextmenu', async (e) => {
-				e.preventDefault();
-				// 忽略来自触摸/长按触发的 contextmenu（移动端长按）
-				if (didLongPress || isTouchActive || (Date.now() - lastTouchTime < 800)) return;
-				const ok = await new ConfirmModal(t('view.confirmDeleteAsset', { name: asset.name }), t('common.delete'), t('common.cancel'), true).open();
-				if (!ok) return;
-				await this.assetRepository.deleteAsset(asset.id);
-				this.loadAssets();
-			});
+			assetEl.addEventListener('touchcancel', onTouchEnd);
+			// 禁用右键删除：不再绑定 contextmenu 删除行为
 		});
 	}
 
@@ -375,10 +370,17 @@ export class AssetManagerView extends ItemView {
 		style.id = STYLE_ID;
 		style.textContent = `
 			/* 仅作用于本视图：保证窄宽时也显示标题栏菜单/返回区域 */
-			.workspace-leaf[data-type="lac-costset-view"] .view-header { display: flex !important; }
-			.workspace-leaf[data-type="lac-costset-view"] .view-header .view-actions { display: inline-flex !important; gap: 6px; }
-			.workspace-leaf[data-type="lac-costset-view"] .view-header-title-container { min-width: 0; }
-			.workspace-leaf[data-type="lac-costset-view"] .view-header-title { max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+			.workspace-leaf[data-type="lac-costset-view"] .view-header {
+				display: flex !important;
+				align-items: center !important;
+				flex-wrap: nowrap !important;
+				visibility: visible !important;
+				height: auto !important;
+				min-height: 36px !important;
+			}
+			.workspace-leaf[data-type="lac-costset-view"] .view-header-title-container { min-width: 0 !important; display: flex !important; }
+			.workspace-leaf[data-type="lac-costset-view"] .view-header-title { flex: 1 1 auto !important; min-width: 0 !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+			.workspace-leaf[data-type="lac-costset-view"] .view-header .view-actions { flex: 0 0 auto !important; display: inline-flex !important; gap: 6px; visibility: visible !important; }
 			@media (max-width: 720px) {
 				.workspace-leaf[data-type="lac-costset-view"] .view-header-title { max-width: 45%; }
 			}

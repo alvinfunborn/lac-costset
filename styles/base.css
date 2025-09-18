@@ -1,5 +1,6 @@
-/* 基础样式和全局设置 */
-body, .page-root {
+/* 基础样式和全局设置（限定在本插件视图作用域） */
+.workspace-leaf[data-type="lac-costset-view"] .view-content,
+.workspace-leaf[data-type="lac-costset-view"] .page-root {
   background: var(--background-primary);
   color: #F5F6FA;
   min-height: 100vh;
@@ -10,17 +11,20 @@ body, .page-root {
   -ms-overflow-style: none !important; /* IE and Edge */
 }
 
-/* 隐藏页面整体滚动条 */
-body::-webkit-scrollbar, .page-root::-webkit-scrollbar {
+/* 隐藏页面整体滚动条（仅影响插件视图容器） */
+.workspace-leaf[data-type="lac-costset-view"] .view-content::-webkit-scrollbar,
+.workspace-leaf[data-type="lac-costset-view"] .page-root::-webkit-scrollbar {
   width: 0px !important;
   background: transparent !important;
 }
 
-body::-webkit-scrollbar-track, .page-root::-webkit-scrollbar-track {
+.workspace-leaf[data-type="lac-costset-view"] .view-content::-webkit-scrollbar-track,
+.workspace-leaf[data-type="lac-costset-view"] .page-root::-webkit-scrollbar-track {
   background: transparent !important;
 }
 
-body::-webkit-scrollbar-thumb, .page-root::-webkit-scrollbar-thumb {
+.workspace-leaf[data-type="lac-costset-view"] .view-content::-webkit-scrollbar-thumb,
+.workspace-leaf[data-type="lac-costset-view"] .page-root::-webkit-scrollbar-thumb {
   background: transparent !important;
 }
 
