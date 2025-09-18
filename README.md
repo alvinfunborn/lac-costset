@@ -18,7 +18,7 @@ Manage your belongings as structured TOML-in-Markdown inside Obsidian. Track pri
 - Command palette: run "Open LaC.CostSet" (command id: `open-lac-costset`). The plugin will use the configured entry file (see Settings) and create a sample if missing.
 - File context menu: right-click a Markdown file and choose "Open with LaC.CostSet" to use that file as the entry (enable this in Settings).
 
-> The view type is `lac-costset-view`. On startup the plugin avoids auto-restoring this view to keep your layout clean.
+> The view type is `lac-costset-view`. Obsidian will restore this view as part of your saved layout. The plugin does not auto-open the view if it wasn't in the layout.
 
 ## Entry file format (required)
 
@@ -44,9 +44,7 @@ Notes:
 
 ## Item note format (TOML)
 
-You can use either the flat schema or the namespaced schema. Both are supported on read; on save the plugin rewrites only the costset-related keys and preserves leading comments.
-
-Flat schema (default emit on new files):
+Each item note is a Markdown file whose TOML keys live at the top level (no extra namespace). The whole note is treated as a costset item. On save the plugin rewrites only the related keys and preserves leading comments.
 
 ```toml
 name = "Thinkbook14p2025"
@@ -62,23 +60,7 @@ recycle_price = 1200
 tags = ["computer", "work"]
 ```
 
-Namespaced schema (also accepted):
-
-```toml
-[costset]
-name = "Thinkbook14p2025"
-hidden = false
-
-[costset.style]
-icon = "💻"
-
-[costset.detail]
-price = 7999
-active_from = "2023-01-01"
-active_to = ""
-recycle_price = 1200
-tags = ["computer", "work"]
-```
+ 
 
 Daily cost is computed from `(price - recycle_price) / daysUsed` where `daysUsed` goes from `active_from` to the selected date (or `active_to` if it ended earlier). The trend chart treats `recycle_price` as `0` until the end date is reached.
 
