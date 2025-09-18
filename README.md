@@ -1,4 +1,4 @@
-# LaC CostSet — Personal Inventory as Code for Obsidian
+# LaC.CostSet — Personal Inventory as Code for Obsidian
 
 Manage your belongings as structured TOML-in-Markdown inside Obsidian. Track price, purchase/end dates, tags, and optional recycle value. Explore daily cost trends, filter by tags, search, sort, and add/edit items with a clean UI.
 
