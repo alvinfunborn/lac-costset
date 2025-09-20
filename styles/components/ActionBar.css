@@ -1,0 +1,49 @@
+/* 提取自原注入样式 */
+.lac-actionbar-card { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 4px 6px; margin: 0px 14px 8px; border-radius: 10px; background: #23262F; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+.lac-actionbar-search { position: relative; flex: 1; min-width: 0; display: flex; align-items: center; }
+.lac-actionbar-search .search-wrap { position: relative; flex: 1; min-width: 0; }
+.lac-actionbar-search input { width: 100%; height: 38px; padding: 6px 12px 6px 54px; border-radius: 8px; border: 1px solid #3A3D46; background: #2A2D36; color: #F5F6FA; font-size: 13px; line-height: 24px; }
+.lac-actionbar-search input::placeholder { color: #A0A3B1; }
+.lac-actionbar-search .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; padding: 0; border: none; background: transparent; color: #C9CBD3; pointer-events: none; z-index: 1; }
+.lac-actionbar-card > .back { margin-right: 0; }
+.lac-icon-btn.back svg { display:none; }
+.lac-icon-btn.back { position: relative; }
+.lac-icon-btn.back::before { content: ""; }
+.lac-actionbar-actions { display: flex; align-items: center; gap: 0px; position: relative; }
+.lac-icon-btn { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; border: none !important; outline: none !important; background: transparent !important; box-shadow: none !important; color: #C9CBD3; cursor: pointer; padding: 0 !important; box-sizing: border-box; flex: 0 0 auto; }
+.lac-icon-btn.add { color: #f3e700; }
+.lac-icon-btn.back { display: inline-flex; color: #C9CBD3; }
+.lac-icon-btn:hover { filter: brightness(1.05); }
+.lac-icon-btn svg { display: none !important; }
+/* 统一用 CSS mask 绘制图标 */
+.lac-icon-btn::before { content: ""; width: 26px; height: 26px; display: block; background: currentColor; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; -webkit-mask-size: contain; mask-repeat: no-repeat; mask-position: center; mask-size: contain; }
+/* back: <  */
+.lac-icon-btn.back::before { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="15,6 9,12 15,18" fill="none" stroke="%23000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="15,6 9,12 15,18" fill="none" stroke="%23000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'); }
+/* sort: up/down chevrons */
+.lac-icon-btn.sort::before { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="8,14 12,18 16,14" fill="none" stroke="%23000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="8,10 12,6 16,10" fill="none" stroke="%23000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="8,14 12,18 16,14" fill="none" stroke="%23000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="8,10 12,6 16,10" fill="none" stroke="%23000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'); }
+/* add: + */
+.lac-icon-btn.add { color: #f3e700; position: relative; }
+.lac-icon-btn.add::before { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" stroke="%23000" stroke-width="2" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke="%23000" stroke-width="2" stroke-linecap="round"/></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" stroke="%23000" stroke-width="2" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke="%23000" stroke-width="2" stroke-linecap="round"/></svg>'); }
+
+/* search icon inside input */
+.lac-actionbar-search .search-icon::before { content: ""; width: 22px; height: 22px; display: block; background: currentColor; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; -webkit-mask-size: contain; mask-repeat: no-repeat; mask-position: center; mask-size: contain; -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" fill="none" stroke="%23000" stroke-width="2"/><line x1="16" y1="16" x2="22" y2="22" stroke="%23000" stroke-width="2" stroke-linecap="round"/></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" fill="none" stroke="%23000" stroke-width="2"/><line x1="16" y1="16" x2="22" y2="22" stroke="%23000" stroke-width="2" stroke-linecap="round"/></svg>'); }
+
+/* 大屏适配：保持图标在输入框内部可见 */
+@media (min-width: 1100px) {
+  .lac-actionbar-search input { max-width: 720px; }
+}
+.lac-icon-btn svg * { stroke: currentColor !important; fill: none !important; stroke-width: 2 !important; }
+.lac-icon-btn.active { background: #2F3139; }
+/* 隐藏态样式（对齐 costsetapp） */
+.asset-card.hidden { opacity: 0.3; filter: grayscale(0.5); }
+/* 排序菜单 */
+.lac-sort-menu { position: absolute; right: 0; top: calc(100% + 8px); min-width: 160px; background: #23262F; color: #F5F6FA; border-radius: 10px; overflow: hidden; box-shadow: 0 8px 18px rgba(0,0,0,0.35); border: 1px solid #3A3D46; z-index: 9999; }
+.lac-sort-menu .menu-item { padding: 10px 14px; cursor: pointer; border-top: 1px solid #2E313A; transition: background 120ms ease, color 120ms ease; }
+.lac-sort-menu .menu-item:first-child { border-top: none; }
+.lac-sort-menu .menu-item:hover { background: rgba(255, 214, 0, 0.12); color: inherit; }
+.lac-sort-menu .menu-item.active { color: #FFD700; }
+@media (max-width: 720px) {
+	.lac-actionbar-card { gap: 8px; }
+    .lac-actionbar-search input { padding-left: 40px; }
+}
+

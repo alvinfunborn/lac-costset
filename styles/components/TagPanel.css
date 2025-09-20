@@ -1,149 +1,80 @@
-/* TagPanel 标签面板样式 */
+/* TagPanel 样式（整理后） */
 
+/* 顶部标签容器：只负责布局与点击，不负责滚动（滚动交给 .labels-scroll-inner） */
 .top-summary-labels {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  margin-bottom: -4px;
-  max-height: 48px;
-  overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    padding: 2px 10px;
+    margin-bottom: 4px;
+    max-height: 48px;
+    overflow: visible; /* 避免与系统滚动条交互 */
 }
 
-.top-summary-labels::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+.top-summary-labels.with-max-height {
+    overflow: visible;
+    position: relative;
+    max-height: var(--max-height);
 }
 
-.top-summary-labels::-webkit-scrollbar-track {
-  background: transparent;
+.top-summary-labels .top-summary-label {
+    display: inline-block;
+    margin: 0 4px 4px 0;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: #2A2D36;
+    color: #F5F6FA;
+    font-size: 10px;
+    line-height: 14px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    min-height: 18px;
 }
+.top-summary-labels .top-summary-label.selected { background: #f3e700; color: #181A20; }
+.top-summary-labels .top-summary-label:hover { filter: brightness(1.05); }
 
-.top-summary-labels::-webkit-scrollbar-thumb {
-  background: #A0A3B1;
-  border-radius: 3px;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.top-summary-labels:hover::-webkit-scrollbar-thumb {
-  opacity: 0.6;
-}
-
-.top-summary-labels::-webkit-scrollbar-thumb:hover {
-  opacity: 1;
-}
-
-.top-summary-label {
-  background: #2A2D36;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 10px;
-  color: #A0A3B1;
-  margin-right: 4px;
-  margin-bottom: 4px;
-  border: 1px solid transparent;
-  font-weight: 500;
-  box-sizing: border-box;
-  min-height: 18px;
-  display: inline-block;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-  cursor: pointer;
-}
-
-.top-summary-label.selected {
-  background: #f3e700;
-  color: #181A20;
-}
-
-/* 标签选择面板样式 */
-.top-summary-panel-mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
-}
-
+/* 遮罩与面板 */
+.top-summary-panel-mask { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 9999; }
 .top-summary-panel {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #23262F;
-  border-radius: 12px;
-  padding: 16px;
-  width: 380px;
-  max-width: 90vw;
-  max-height: 60vh;
-  min-height: 320px;
-  height: 60vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  z-index: 10000;
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    padding: 16px 16px; width: 380px; max-width: 90vw; max-height: 60vh; min-height: 320px; height: 60vh;
+    background: #23262F; color: #F5F6FA; border-radius: 12px; box-shadow: 0 8px 18px rgba(0,0,0,0.35); border: 1px solid #3A3D46;
+    display: flex; flex-direction: column; overflow: hidden; z-index: 10000;
 }
 
-.top-summary-panel-search {
-  width: 100%;
-  background: #2A2D36;
-  border: 1px solid #3A3D46;
-  border-radius: 8px;
-  padding: 12px;
-  color: #F5F6FA;
-  font-size: 14px;
-  outline: none;
-  margin-bottom: 16px;
-}
+/* 搜索框 */
+.top-summary-panel-search { width: 100%; height: 36px; padding: 6px 12px; border-radius: 16px; border: 1px solid #3A3D46; background: #2A2D36; color: #F5F6FA; font-size: 14px; margin-bottom: 16px; outline: none; }
+.top-summary-panel-search::placeholder { color: #A0A3B1; }
+.top-summary-panel-search:focus { border-color: #f3e700; }
 
-.top-summary-panel-search:focus {
-  border-color: #f3e700;
-}
+/* 标签选择面板 */
+.top-summary-panel-labels { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; overflow-y: auto; flex: 1; padding-right: 4px; align-items: flex-start; align-content: flex-start; }
+.top-summary-panel-label { background: #2A2D36; padding: 8px 12px; border-radius: 10px; font-size: 12px; color: #A0A3B1; cursor: pointer; transition: background 0.2s, color 0.2s; }
+.top-summary-panel-label.selected { background: #f3e700; color: #181A20; }
+.top-summary-panel-label:hover { filter: brightness(1.06); }
+.top-summary-panel-actions { display: flex; gap: 12px; justify-content: center; padding: 8px 16px 12px 16px; }
+.top-summary-panel-actions .panel-btn { color: #F5F6FA; background: #3A3D46; font-size: 14px; border-radius: 6px; padding: 8px 16px; cursor: pointer; -webkit-user-select: none; user-select: none; transition: background 0.2s; }
+.top-summary-panel-actions .panel-btn:hover { background: #4A4D56; }
+@media (max-width: 560px) { .top-summary-panel { width: calc(100% - 16px); } }
 
-.top-summary-panel-labels {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
-  overflow-y: auto;
-  flex: 1;
-  padding-right: 4px;
-  align-items: flex-start;        /* 防止单个标签被拉伸为整列高度 */
-  align-content: flex-start;      /* 多行时从顶部开始堆叠，不平均分布拉伸 */
+/* 自定义滚动条：隐藏原生、覆盖式细拇指，不挤压布局 */
+.labels-scroll-inner { overflow-y: auto; overflow-x: hidden; max-height: 48px; padding: 2px 10px; margin-bottom: 4px; scrollbar-width: none; -ms-overflow-style: none; }
+.labels-scroll-inner::-webkit-scrollbar { width: 0; height: 0; }
+.labels-scrollbar { position: absolute; top: 0; right: 2px; bottom: 0; width: 4px; opacity: 0; transition: opacity .15s ease; pointer-events: none; }
+.labels-scrollbar.visible { opacity: .9; }
+.labels-scrollbar-thumb { 
+    position: absolute; 
+    left: 0; 
+    width: 4px; 
+    background: rgba(160,163,177,.75); 
+    border-radius: 2px; 
+    cursor: grab; 
+    pointer-events: auto;
+    height: var(--thumb-height);
+    transform: translateY(var(--thumb-top));
 }
-
-.top-summary-panel-label {
-  background: #2A2D36;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 12px;
-  color: #A0A3B1;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-
-.top-summary-panel-label.selected {
-  background: #f3e700;
-  color: #181A20;
-}
-
-.top-summary-panel-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-
-.panel-btn {
-  padding: 8px 16px;
-  background: #3A3D46;
-  color: #F5F6FA;
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.panel-btn:hover {
-  background: #4A4D56;
-}
+.labels-scrollbar-thumb:active { cursor: grabbing; }

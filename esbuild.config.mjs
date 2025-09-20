@@ -42,19 +42,25 @@ const jsContext = await esbuild.context({
 	treeShaking: true,
 	outfile: "main.js",
 	minify: prod,
+	loader: { 
+		'.ts': 'ts',
+		'.tsx': 'tsx'
+	},
 });
 
 // 构建CSS - 使用自定义合并函数而不是esbuild
 
         // 合并所有CSS文件到styles.css
         async function buildCSS() {
-            const cssFiles = [
+    const cssFiles = [
                 "styles/base.css",
+                "styles/components/ActionBar.css",
                 "styles/components/TopSummary.css",
                 "styles/components/TagPanel.css",
                 "styles/components/AssetManagerView.css",
                 "styles/components/AssetCard.css",
                 "styles/components/modals/AssetFormModal.css",
+                "styles/components/modals/ConfirmModal.css",
                 "styles/components/settings/LacCostSetSettingTab.css"
             ];
 	

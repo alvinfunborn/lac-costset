@@ -3,14 +3,13 @@ import { LacCostSetSettings, DEFAULT_SETTINGS } from './types';
 import { setLocale, resolveLocale, t } from './i18n';
 import { AssetRepository } from './repositories/AssetRepository';
 import { AssetManagerView } from './components/AssetManagerView';
-import { AssetFormModal } from './components/modals/AssetFormModal';
 import { LacCostSetSettingTab } from './components/settings/LacCostSetSettingTab';
 
 
 // 主插件类
 export default class LacCostSetPlugin extends Plugin {
-	settings: LacCostSetSettings;
-	assetRepository: AssetRepository;
+	settings!: LacCostSetSettings;
+	assetRepository!: AssetRepository;
 
 	async onload() {
 		await this.loadSettings();
@@ -156,7 +155,8 @@ export default class LacCostSetPlugin extends Plugin {
 	}
 
 	onunload() {
-		// 清理资源
+		// 清理资源并移除已打开的自定义视图，避免残留叶
+		try { this.app.workspace.detachLeavesOfType('lac-costset-view'); } catch (_) {}
 	}
 
 	async loadSettings() {

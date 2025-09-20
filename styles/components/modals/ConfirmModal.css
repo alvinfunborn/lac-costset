@@ -1,0 +1,6 @@
+/* ConfirmModal 样式（从注入式迁移） */
+.date-picker-modal .confirm-message { color: #F5F6FA; line-height: 1.6; padding: 8px 0 16px; }
+.date-picker-modal .date-picker-btn.danger { background: #7a1e1e; color: #fff; }
+.date-picker-modal .date-picker-btn.danger:hover { background: #992525; }
+
+

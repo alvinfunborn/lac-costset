@@ -28,22 +28,16 @@ export class AssetFormModal {
 		// 弹窗容器（复用日期选择器样式并加自定义标识）
 		this.modalEl = document.createElement('div');
 		this.modalEl.className = 'date-picker-modal asset-form-modal';
-		// 注入一次性的横向表单样式，降低整体高度
-		this.injectAssetFormStyles();
+		// 样式改为使用样式表中的类，不再注入行内样式
 
 		const content = document.createElement('div');
-		content.className = 'date-picker-content';
-		(content.style as any).gap = '0px';
+		content.className = 'date-picker-content asset-form-content';
 
 		// 去掉标题显示
 
 		// 表单
 		const form = document.createElement('form');
 		form.className = 'asset-form asset-form--horizontal';
-		form.style.display = 'grid';
-		(form.style as any).gridTemplateColumns = '1fr';
-		form.style.rowGap = '0px';
-		(form.style as any).gap = '0px';
 
 		// —— 表单校验工具 ——
 		const ensureErrorEl = (group: HTMLElement): HTMLElement => {
@@ -60,13 +54,13 @@ export class AssetFormModal {
 		const setError = (group: HTMLElement, message: string) => {
 			group.classList.add('has-error');
 			const input = group.querySelector('input, textarea, select') as HTMLElement | null;
-			if (input) (input as any).setAttribute('aria-invalid', 'true');
+			if (input) input.setAttribute('aria-invalid', 'true');
 			ensureErrorEl(group).textContent = message;
 		};
 		const clearError = (group: HTMLElement) => {
 			group.classList.remove('has-error');
 			const input = group.querySelector('input, textarea, select') as HTMLElement | null;
-			if (input) (input as any).setAttribute('aria-invalid', 'false');
+			if (input) input.setAttribute('aria-invalid', 'false');
 			const err = group.querySelector('.field-error') as HTMLElement | null;
 			if (err) err.remove();
 		};
@@ -139,9 +133,9 @@ export class AssetFormModal {
 			priceGroup.appendChild(lbl);
 		}
 		const priceInput = document.createElement('input') as HTMLInputElement;
-		priceInput.type = 'number';
+		priceInput.type = 'text';
+		priceInput.setAttribute('inputmode', 'decimal');
 		priceInput.placeholder = t('form.price.placeholder');
-		priceInput.step = '0.01';
 		if (this.asset) priceInput.value = this.asset.price.toString();
 		// 与 costsetapp 对齐：输入与失焦时净化为合法数字格式
 		const sanitizeNumeric = (el: HTMLInputElement) => {
@@ -212,7 +206,7 @@ export class AssetFormModal {
 		toInput.placeholder = t('form.endDatePlaceholder');
 		toInput.value = (this.asset && this.asset.activeTo) ? this.formatDateLocal(this.asset.activeTo) : '';
 		let clearBtn: HTMLButtonElement | undefined;
-		const updateToClear = () => { if (clearBtn) clearBtn.style.display = toInput.value ? 'inline-flex' : 'none'; };
+		const updateToClear = () => { if (clearBtn) clearBtn.classList.toggle('visible', !!toInput.value); };
 		toInput.addEventListener('click', () => {
 			this.openDatePicker(toInput.value ? new Date(toInput.value) : (this.asset?.activeTo || new Date()), (picked) => {
 				toInput.value = this.formatDateLocal(picked);
@@ -254,9 +248,9 @@ export class AssetFormModal {
 		recycleGroup.className = 'form-group';
 		recycleGroup.appendChild(this.createLabel(t('form.recyclePrice')));
 		const recycleInput = document.createElement('input') as HTMLInputElement;
-		recycleInput.type = 'number';
+		recycleInput.type = 'text';
+		recycleInput.setAttribute('inputmode', 'decimal');
 		recycleInput.placeholder = t('form.recycle.placeholder');
-		recycleInput.step = '0.01';
 		if (this.asset) recycleInput.value = this.asset.recyclePrice.toString();
 		recycleInput.addEventListener('input', () => sanitizeNumeric(recycleInput));
 		recycleInput.addEventListener('blur', () => { sanitizeNumeric(recycleInput); limitTwoDecimals(recycleInput); });
@@ -405,7 +399,6 @@ export class AssetFormModal {
 			const recycleStr = (recycleInput.value || '').trim();
 			const recycleNum = recycleStr ? this.parseMoney(recycleStr) : 0;
 			if (recycleStr && recycleNum === null) { setError(recycleGroup, t('form.error.recycleInvalid')); return; }
-			if ((recycleNum || 0) > priceValue) { setError(recycleGroup, t('form.error.recycleGtPrice')); return; }
 
 			const assetData = {
 				id: this.asset?.id || nameVal,
@@ -428,66 +421,9 @@ export class AssetFormModal {
 		});
 	}
 
-	private injectAssetFormStyles() {
-		const STYLE_ID = 'asset-form-inline-styles';
-		if (document.getElementById(STYLE_ID)) return;
-		const style = document.createElement('style');
-		style.id = STYLE_ID;
-		style.textContent = `
-			/* 到期输入清除按钮 */
-			.date-picker-modal.asset-form-modal .input-with-clear { position: relative; }
-			.date-picker-modal.asset-form-modal .input-with-clear .input-clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 14px; line-height: 18px; }
-			/* 弹窗容器更紧凑 */
-			.date-picker-modal.asset-form-modal { max-height: 80vh; overflow: auto; }
-			.date-picker-modal.asset-form-modal .date-picker-content { padding: 16px 20px; display: flex; flex-direction: column; gap: 0 !important; }
-			.date-picker-modal.asset-form-modal .date-picker-title { font-size: 14px; margin-bottom: 6px; }
+	// 移除：行内注入样式已迁移至样式表
 
-			/* 横向表单布局，压缩垂直空白 */
-			.date-picker-modal.asset-form-modal .asset-form.asset-form--horizontal { font-size: 15.5px; display: grid !important; grid-template-columns: 1fr; row-gap: 8px !important; column-gap: 0 !important; gap: 8px !important; }
-			.date-picker-modal.asset-form-modal .asset-form.asset-form--horizontal .form-group { display: grid !important; grid-template-columns: 64px 1fr; align-items: center; column-gap: 8px; row-gap: 0; margin: 0 !important; padding: 0 !important; }
-			.date-picker-modal.asset-form-modal .asset-form.asset-form--horizontal label { min-width: 64px; margin: 0; text-align: right; justify-self: end; }
-			.date-picker-modal.asset-form-modal .asset-form.asset-form--horizontal .form-field { width: 100%; margin: 0 !important; padding: 0 !important; }
-			/* 压缩输入控件高度与内边距 */
-			.date-picker-modal.asset-form-modal .asset-form.asset-form--horizontal input[type="text"],
-			.date-picker-modal.asset-form-modal .asset-form.asset-form--horizontal input[type="number"] { height: 32px; padding: 4px 10px; font-size: 15.5px; line-height: 1.45; }
-			/* 标签输入与 chip 更紧凑 */
-			.date-picker-modal.asset-form-modal .asset-form.asset-form--horizontal .tags-input { display: flex; flex-wrap: wrap; gap: 4px; }
-			.date-picker-modal.asset-form-modal .asset-form.asset-form--horizontal .tag-chip { font-size: 12px; height: 18px; line-height: 18px; padding: 0 6px; border-radius: 4px; }
-			.date-picker-modal.asset-form-modal .asset-form.asset-form--horizontal .tag-chip .remove { width: 16px; height: 16px; line-height: 16px; font-size: 12px; margin-left: 4px; }
-			.date-picker-modal.asset-form-modal .asset-form.asset-form--horizontal .tags-input input { flex: 1; min-width: 120px; height: 28px; padding: 4px 10px; font-size: 14.5px; }
-
-			/* 必填与错误样式 */
-			.date-picker-modal.asset-form-modal .label-required::after { content: ' *'; color: #ff4d4f; margin-left: 2px; }
-			.date-picker-modal.asset-form-modal .form-group.has-error input[type="text"],
-			.date-picker-modal.asset-form-modal .form-group.has-error input[type="number"] { border-color: #ff4d4f !important; box-shadow: 0 0 0 1px #ff4d4f inset; }
-			.date-picker-modal.asset-form-modal .field-error { margin-top: 4px; color: #ff8587; font-size: 12px; line-height: 1.3; }
-			.date-picker-modal.asset-form-modal .field-error:empty { display: none; margin-top: 0; }
-
-			/* 操作按钮区更紧凑 */
-			.date-picker-modal.asset-form-modal .form-actions { margin-top: 12px; gap: 16px; display: flex; justify-content: center; }
-			.date-picker-modal.asset-form-modal .form-btn { height: 34px; padding: 0 14px; font-size: 14px; }
-		`;
-		document.head.appendChild(style);
-	}
-
-	private applyRowLayout(group: HTMLElement) {
-		group.style.display = 'grid';
-		(group.style as any).gridTemplateColumns = '72px 1fr';
-		group.style.alignItems = 'center';
-		group.style.columnGap = '8px';
-		group.style.rowGap = '0px';
-		group.style.margin = '0';
-		const label = group.querySelector('label') as HTMLElement | null;
-		if (label) {
-			label.style.minWidth = '72px';
-			label.style.display = 'inline-block';
-			label.style.margin = '0';
-		}
-		const field = group.querySelector('.form-field') as HTMLElement | null;
-		if (field) {
-			field.style.width = '100%';
-		}
-	}
+	private applyRowLayout(_group: HTMLElement) { /* 布局由 CSS 负责 */ }
 
 	close() {
 		if (this.maskEl && this.maskEl.parentElement) {
@@ -630,7 +566,7 @@ export class AssetFormModal {
 
 		let selectedIndex = values.indexOf(selectedValue);
 		let currentSelectedValue = selectedValue;
-		const api = { element: column, selectedValue: currentSelectedValue };
+		const api: { element: HTMLElement, selectedValue: number } = { element: column, selectedValue: currentSelectedValue };
 		const itemHeight = 40;
 
 		if (isInfinite) {
@@ -649,7 +585,7 @@ export class AssetFormModal {
 					container.appendChild(item);
 				});
 			}
-			container.style.height = `${totalItems * itemHeight}px`;
+			// 使用内容自然高度，无需强制设置容器高度
 			const initialItemIndex = middleGroupIndex * values.length + selectedIndex;
 			const items = Array.from(container.querySelectorAll('.date-wheel-item')) as HTMLElement[];
 			if (items[initialItemIndex]) {
@@ -671,7 +607,7 @@ export class AssetFormModal {
 				});
 				selectedIndex = realIndex;
 				currentSelectedValue = realValue;
-				(api as any).selectedValue = realValue;
+				api.selectedValue = realValue;
 				if (onChange) onChange(currentSelectedValue);
 				const maxScrollTop = (repeatCount - 1) * values.length * itemHeight;
 				if (scrollTop >= maxScrollTop) {
@@ -698,7 +634,7 @@ export class AssetFormModal {
 				container.scrollTop = middleIndex * itemHeight;
 				selectedIndex = realIndex;
 				currentSelectedValue = values[realIndex];
-				(api as any).selectedValue = currentSelectedValue;
+				api.selectedValue = currentSelectedValue;
 				if (onChange) onChange(currentSelectedValue);
 			});
 		} else {
@@ -720,7 +656,7 @@ export class AssetFormModal {
 					});
 					selectedIndex = newIndex;
 					currentSelectedValue = values[newIndex];
-					(api as any).selectedValue = currentSelectedValue;
+					api.selectedValue = currentSelectedValue;
 					if (onChange) onChange(currentSelectedValue);
 				}
 			});
@@ -737,14 +673,14 @@ export class AssetFormModal {
 				container.scrollTop = idx * itemHeight;
 				selectedIndex = idx;
 				currentSelectedValue = values[idx];
-				(api as any).selectedValue = currentSelectedValue;
+				api.selectedValue = currentSelectedValue;
 				if (onChange) onChange(currentSelectedValue);
 			});
 			setTimeout(() => { container.scrollTop = selectedIndex * itemHeight; }, 0);
 		}
 
 		column.appendChild(container);
-		return api as any;
+		return api;
 	}
 
 	private updateDaysColumn(dayColumn: { element: HTMLElement, selectedValue: number }, year: number, month: number): void {
@@ -770,7 +706,7 @@ export class AssetFormModal {
 				container.appendChild(item);
 			});
 		}
-		container.style.height = `${newDays.length * repeatCount * itemHeight}px`;
+		// 使用内容自然高度，无需强制设置容器高度
 		const initialItemIndexDay = middleGroupIndex * newDays.length + selectedIndex;
 		const dayItems = Array.from(container.querySelectorAll('.date-wheel-item')) as HTMLElement[];
 		if (dayItems[initialItemIndexDay]) {
@@ -788,7 +724,7 @@ export class AssetFormModal {
 				const itemRealIndex = index % newDays.length;
 				item.classList.toggle('selected', itemRealIndex === realIndex);
 			});
-			(dayColumn as any).selectedValue = realValue;
+			dayColumn.selectedValue = realValue;
 			const maxScrollTop = (repeatCount - 1) * newDays.length * itemHeight;
 			if (scrollTop >= maxScrollTop) {
 				isScrolling = true;
@@ -812,7 +748,7 @@ export class AssetFormModal {
 			const realIndex = clickedIndex % newDays.length;
 			const middleIndex = middleGroupIndex * newDays.length + realIndex;
 			container.scrollTop = middleIndex * itemHeight;
-			(dayColumn as any).selectedValue = newDays[realIndex];
+			dayColumn.selectedValue = newDays[realIndex];
 		});
 	}
 	private createLabel(text: string): HTMLElement {

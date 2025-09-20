@@ -1,4 +1,21 @@
 /* AssetManagerView 主视图样式 */
+.workspace-leaf[data-type="lac-costset-view"] .view-header {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  visibility: visible !important;
+  height: auto !important;
+  min-height: 36px !important;
+}
+.workspace-leaf[data-type="lac-costset-view"] .view-header-title-container { min-width: 0 !important; display: flex !important; }
+.workspace-leaf[data-type="lac-costset-view"] .view-header-title { flex: 1 1 auto !important; min-width: 0 !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.workspace-leaf[data-type="lac-costset-view"] .view-header .view-actions { flex: 0 0 auto !important; display: inline-flex !important; gap: 6px; visibility: visible !important; }
+@media (max-width: 720px) {
+  .workspace-leaf[data-type="lac-costset-view"] .view-header-title { max-width: 45%; }
+}
+@media (max-width: 560px) {
+  .workspace-leaf[data-type="lac-costset-view"] .view-header-title { max-width: 35%; }
+}
 
 /* 操作栏样式 */
 .action-bar {
@@ -126,6 +143,7 @@
   margin-bottom: 12px;
   scrollbar-width: none !important; /* Firefox */
   -ms-overflow-style: none !important; /* IE and Edge */
+  min-height: 0 !important; /* 使其在 flex 容器内可滚动 */
 }
 
 /* 隐藏资产列表滚动条 */
@@ -142,6 +160,45 @@
   background: transparent !important;
 }
 
+
+/* 让视图内容成为可伸展的列布局，确保列表可滚动 */
+.workspace-leaf-content[data-type="lac-costset-view"],
+.workspace-leaf[data-type="lac-costset-view"] .view-content,
+.workspace-leaf[data-type="lac-costset-view"] .workspace-leaf-content {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important; /* 由内部列表负责滚动 */
+}
+
+/* 直接子节点（即 this.containerEl）也需要成为可伸展列容器 */
+.workspace-leaf-content[data-type="lac-costset-view"] > div,
+.workspace-leaf[data-type="lac-costset-view"] .view-content > div,
+.workspace-leaf[data-type="lac-costset-view"] .workspace-leaf-content > div {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+/* React 根容器：列布局，占满可用空间 */
+/* 挂载根使用 lac-react-root，而非 page-root，避免额外包裹导致高度问题 */
+
+/* React 挂载点填满视图并允许子元素滚动布局 */
+.workspace-leaf-content[data-type="lac-costset-view"] .lac-react-root,
+.workspace-leaf[data-type="lac-costset-view"] .lac-react-root {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+/* 顶部区域为自然高度，资产列表吃掉剩余空间 */
+.top-summary { flex: 0 0 auto; }
+.lac-actionbar-card { flex: 0 0 auto; }
+.assets-container { flex: 1 1 auto; }
 
 /* 搜索框样式 */
 .actionbar-searchbox {

@@ -253,3 +253,24 @@
 .date-picker-btn-confirm:hover {
   background: #e6d000;
 }
+
+/* 居中优化的 Notice 样式（强制覆盖 Obsidian 默认定位） */
+.lac-costset-notice {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 99999 !important;
+  min-width: 280px !important;
+  max-width: 520px !important;
+  text-align: center !important;
+  background: rgba(35,38,47,0.96) !important;
+  color: #F5F6FA !important;
+  border: 1px solid #3A3D46 !important;
+  border-radius: 12px !important;
+  padding: 14px 18px !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.42) !important;
+  pointer-events: auto !important;
+}

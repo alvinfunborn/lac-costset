@@ -16,7 +16,7 @@ export class ConfirmModal {
 
     open(): Promise<boolean> {
         return new Promise<boolean>((resolve) => {
-            this.injectStylesOnce();
+            // 样式已迁移至 styles/components/modals/ConfirmModal.css
 
             this.maskEl = document.createElement('div');
             this.maskEl.className = 'date-picker-mask';
@@ -77,18 +77,7 @@ export class ConfirmModal {
         });
     }
 
-    private injectStylesOnce() {
-        const STYLE_ID = 'lac-confirm-modal-styles';
-        if (document.getElementById(STYLE_ID)) return;
-        const style = document.createElement('style');
-        style.id = STYLE_ID;
-        style.textContent = `
-            .date-picker-modal .confirm-message { color: #F5F6FA; line-height: 1.6; padding: 8px 0 16px; }
-            .date-picker-modal .date-picker-btn.danger { background: #7a1e1e; color: #fff; }
-            .date-picker-modal .date-picker-btn.danger:hover { background: #992525; }
-        `;
-        document.head.appendChild(style);
-    }
+    // 样式注入函数已移除
 }
 
 

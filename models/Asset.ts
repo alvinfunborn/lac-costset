@@ -33,7 +33,7 @@ export class Asset {
 			this.price = Number(idOrRawData.price) || 0;
 			this.activeFrom = this.parseDate(idOrRawData.active_from || idOrRawData.activeFrom) || new Date();
 			this.activeTo = this.parseDate(idOrRawData.active_to || idOrRawData.activeTo) || undefined;
-			this.recyclePrice = Number(idOrRawData.recycle_price) || 0;
+			this.recyclePrice = Number(idOrRawData.recycle_price ?? idOrRawData.recyclePrice) || 0;
 			this.tags = Array.isArray(idOrRawData.tags) ? idOrRawData.tags : (idOrRawData.tags || '').split(',').map((l: string) => l.trim()).filter((tag: string) => tag);
 			this.hidden = !!idOrRawData.hidden;
 		} else {
@@ -52,10 +52,15 @@ export class Asset {
 	
 	getDailyCost(now: Date = new Date()): number {
 		const from = this.activeFrom;
+		// 未来资产：日均成本为 0
+		if (from.getTime() > now.getTime()) return 0;
 		// 计算到达日期：若存在 activeTo，则与 now 取较早者；否则取 now
 		const end = this.activeTo && this.activeTo.getTime() < now.getTime() ? this.activeTo : now;
 		const days = Math.max(1, Math.floor((end.getTime() - from.getTime()) / 86400000));
-		return (this.price - this.recyclePrice) / days;
+		// 仅当资产已到期（activeTo 存在且不晚于 now）时，才计入回收价
+		const hasExpired = !!this.activeTo && this.activeTo.getTime() <= now.getTime();
+		const costBasis = hasExpired ? (this.price - this.recyclePrice) : this.price;
+		return costBasis / days;
 	}
 	
 	getUsageDays(now: Date = new Date()): number {
