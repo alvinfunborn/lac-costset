@@ -143,7 +143,6 @@ const dict: Dict = {
 	'form.error.fromRequired': { zh: '请选择购入日期', en: 'Please select a purchase date' },
 	'form.error.toBeforeFrom': { zh: '到期日期需不早于购入日期', en: 'End date must not be earlier than purchase date' },
 	'form.error.recycleInvalid': { zh: '回收价格格式不正确', en: 'Invalid recycle price format' },
-	'form.error.recycleGtPrice': { zh: '回收价不能大于价格', en: 'Recycle price must not exceed price' },
 
 	// Tag panel
 	'tags.search.placeholder': { zh: '搜索标签', en: 'Search tags' },

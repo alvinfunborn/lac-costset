@@ -17,7 +17,14 @@ export class AssetManagerView extends ItemView {
 	}
 
 	getViewType(): string { return 'lac-costset-view'; }
-	getDisplayText(): string { return 'LaC.CostSet'; }
+	getDisplayText(): string {
+		if (this.filePath) {
+			const base = this.filePath.split('/').pop() || this.filePath;
+			const name = base.replace(/\.md$/i, '');
+			return `LaC.CostSet — ${name}`;
+		}
+		return 'LaC.CostSet';
+	}
 	getIcon(): string { return 'package'; }
 
 	private showCenteredNotice(msgKey: string, duration = 5000) {

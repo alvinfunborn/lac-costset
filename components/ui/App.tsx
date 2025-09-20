@@ -50,7 +50,15 @@ export const AppRoot: React.FC<AppProps> = ({ app, repository, onBack }) => {
 
     const filteredAssets = useMemo<Asset[]>(() => {
         const calcDate = selectedDate;
-        let list = assets.filter((a: Asset) => a.activeFrom <= calcDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const calc = new Date(calcDate);
+        calc.setHours(0, 0, 0, 0);
+        let list = assets.slice();
+        if (calc.getTime() < today.getTime()) {
+            list = list.filter((a: Asset) => a.activeFrom <= calcDate);
+        }
+        
         if (selectedTags.length > 0) list = applyTagFilter(list);
         if (searchQuery.trim()) {
             const q = searchQuery.trim().toLowerCase();

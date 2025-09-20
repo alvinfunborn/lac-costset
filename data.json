@@ -3,7 +3,7 @@
   "entryFile": "LaC/CostSet/costset.md",
   "enableContextMenu": true,
   "defaultSort": "none",
-  "locale": "en",
+  "locale": "auto",
   "assetsFolder": "LaC/CostSet",
   "rootFilePath": "LaC/CostSet/costset.md",
   "autoSync": true

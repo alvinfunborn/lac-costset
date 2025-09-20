@@ -405,7 +405,6 @@ export class AssetFormModal {
 			const recycleStr = (recycleInput.value || '').trim();
 			const recycleNum = recycleStr ? this.parseMoney(recycleStr) : 0;
 			if (recycleStr && recycleNum === null) { setError(recycleGroup, t('form.error.recycleInvalid')); return; }
-			if ((recycleNum || 0) > priceValue) { setError(recycleGroup, t('form.error.recycleGtPrice')); return; }
 
 			const assetData = {
 				id: this.asset?.id || nameVal,
