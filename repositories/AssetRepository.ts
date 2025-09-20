@@ -1,10 +1,12 @@
-import { App, TFile } from 'obsidian';
+import { App, TFile, Notice } from 'obsidian';
 import { Asset } from '../models/Asset';
+import { t } from '../i18n';
 
 // AssetRepository类 - 使用Obsidian API
 export class AssetRepository {
 	private app: App;
 	private rootFilePath: string;
+	private hasWarnedInvalidEntry: boolean = false;
 
 	constructor(app: App, rootFilePath: string) {
 		this.app = app;
@@ -20,8 +22,25 @@ export class AssetRepository {
 		return 'assets'; // 默认文件夹
 	}
 
+	// 校验入口文件是否有效（type=root 且 renders 包含 costset）
+	async isValidEntry(): Promise<boolean> {
+		const file = this.app.vault.getAbstractFileByPath(this.rootFilePath);
+		if (!file || !(file instanceof TFile)) return false;
+		try {
+			const content = await this.app.vault.read(file);
+			const parsed = this.parseToml(this.quoteWikilinksForToml(content)) || {};
+			const typeVal = String((parsed as any)['type'] ?? '').toLowerCase();
+			let renders: any = (parsed as any)['renders'];
+			if (!Array.isArray(renders)) renders = typeof renders === 'string' ? [renders] : [];
+			const hasCostset = (renders as any[]).map(v => String(v).toLowerCase()).some(s => s.includes('costset'));
+			return typeVal === 'root' && hasCostset;
+		} catch (_) {
+			return false;
+		}
+	}
+
 	// 加载所有资产
-	async loadAll(): Promise<Asset[]> {
+    async loadAll(): Promise<Asset[]> {
 		const rootFile = this.app.vault.getAbstractFileByPath(this.rootFilePath);
 		if (!rootFile || !(rootFile instanceof TFile)) {
 			return [];
@@ -29,28 +48,28 @@ export class AssetRepository {
 
 		try {
 			const content = await this.app.vault.read(rootFile);
-			const matches = content.match(/\[\[([^\]]+)\]\]/g) || [];
+			const matches = content.match(/\[\[[^\]]+\]\]/g) || [];
 			const linkTargets = matches
 				.map(m => m.replace(/^\[\[|\]\]$/g, ''))
 				.map(s => s.split('|')[0]?.trim())
 				.filter(Boolean) as string[];
 			
 			const assets: Asset[] = [];
-			for (const target of linkTargets) {
-				let file: TFile | null = null;
-				try {
-					file = this.app.metadataCache.getFirstLinkpathDest(target, this.rootFilePath) as TFile | null;
-				} catch (_) {
-					file = null;
-				}
-				if (!file) continue;
+            for (const target of linkTargets) {
+                let file: TFile | null = null;
+                try {
+                    const dest = this.app.metadataCache.getFirstLinkpathDest(target, this.rootFilePath);
+                    file = dest && dest instanceof TFile ? dest : null;
+                } catch (_) {
+                    file = null;
+                }
+                if (!file) continue;
 
                         try {
                                         const fileContent = await this.app.vault.read(file);                                                                    
                                         const data = this.parseToml(this.quoteWikilinksForToml(fileContent));                                                   
 					const assetId = file.basename || target;
 					const asset = new Asset(assetId, data);
-					// hidden 字段仅内存使用，加载时默认关闭
 					asset.hidden = false;
 					assets.push(asset);
 				} catch (e) {
@@ -65,13 +84,14 @@ export class AssetRepository {
 	}
 
 	// 保存资产（仅修改与 costset 相关的键：name、style.icon、detail.*、hidden）
-	async saveAsset(asset: Asset): Promise<void> {
-		let targetFile: TFile | null = null;
-		try {
-			targetFile = this.app.metadataCache.getFirstLinkpathDest(asset.id, this.rootFilePath) as TFile | null;
-		} catch (_) {
-			targetFile = null;
-		}
+    async saveAsset(asset: Asset): Promise<void> {
+        let targetFile: TFile | null = null;
+        try {
+            const dest = this.app.metadataCache.getFirstLinkpathDest(asset.id, this.rootFilePath);
+            targetFile = dest && dest instanceof TFile ? dest : null;
+        } catch (_) {
+            targetFile = null;
+        }
 
 		// 不再扫描子目录或遍历文件：仅依赖 Obsidian 的双链解析
 
@@ -86,7 +106,7 @@ export class AssetRepository {
 			}
 						const initialContent = this.dequoteWikilinks(asset.toTomlString());
 			try {
-							await this.app.vault.create(filePath, initialContent);                                                                    
+						await this.app.vault.create(filePath, initialContent);                                                                    
 			} catch (e) {
 				// 尝试使用 encode 后的文件名再次创建
 				fileName = `${encodeURIComponent(asset.id)}.md`;
@@ -96,7 +116,7 @@ export class AssetRepository {
 		} else {
 			// 纯 TOML 重写模式：读取→解析→仅改相关键→整体重写；注释置顶保留
 			const existing = await this.app.vault.read(targetFile);
-					const rewritten = this.rewriteTomlWithCommentsTop(existing, asset);                                                                     
+					const rewritten = this.rewriteTomlWithCommentsTop(existing, asset);                                                                      
 					await this.app.vault.modify(targetFile, this.dequoteWikilinks(rewritten));     
 		}
 
@@ -128,13 +148,13 @@ export class AssetRepository {
 
 			if (isAdd) {
 					// 添加资产引用：若已存在任意形式的双链（[[id]] 或 [[id|alias]]）则不重复添加
-					const hasAnyLink = new RegExp(`\\[\\[${assetId}(\\|[^\\]]+)?\\]\\]`).test(rootContent);
+					const hasAnyLink = new RegExp(`\\[\\[${assetId}(\\|[^\\]]+)?\\\\]\\]`).test(rootContent);
 					if (!hasAnyLink) {
 							rootContent += `\n[[${assetId}]]`;
 					}
 			} else {
 					// 删除资产引用：同时移除 [[id]] 与 [[id|alias]] 的整行或行内片段
-					rootContent = rootContent.replace(new RegExp(`\\[\\[${assetId}(\\|[^\\]]+)?\\]\\]`, 'g'), '');
+					rootContent = rootContent.replace(new RegExp(`\\[\\[${assetId}(\\|[^\\]]+)?\\\\]\\]`, 'g'), '');
 					rootContent = rootContent.replace(/\n{3,}/g, '\n\n').trimEnd();
 			}
 
@@ -208,10 +228,10 @@ export class AssetRepository {
 			else otherLines.push(raw);
 		}
                 // 使用已有轻量 parser 读取为对象
-                const parsed = this.parseToml(this.quoteWikilinksForToml(otherLines.join('\n'))) || {};     
+        const parsed = this.parseToml(this.quoteWikilinksForToml(otherLines.join('\n'))) || {};
 
 		// 应用仅 costset 相关的字段更新
-		(parsed as any)['name'] = asset.name;
+        parsed['name'] = asset.name;
 		if (!parsed['style'] || typeof parsed['style'] !== 'object') parsed['style'] = {};
 		parsed['style']['icon'] = asset.icon;
 		if (!parsed['detail'] || typeof parsed['detail'] !== 'object') parsed['detail'] = {};

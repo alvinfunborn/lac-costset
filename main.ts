@@ -3,7 +3,6 @@ import { LacCostSetSettings, DEFAULT_SETTINGS } from './types';
 import { setLocale, resolveLocale, t } from './i18n';
 import { AssetRepository } from './repositories/AssetRepository';
 import { AssetManagerView } from './components/AssetManagerView';
-import { AssetFormModal } from './components/modals/AssetFormModal';
 import { LacCostSetSettingTab } from './components/settings/LacCostSetSettingTab';
 
 

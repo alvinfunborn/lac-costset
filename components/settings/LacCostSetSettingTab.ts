@@ -60,11 +60,11 @@ export class LacCostSetSettingTab extends PluginSettingTab {
 				drop.addOption('priceDesc', t('settings.defaultSort.option.priceDesc'));
 				drop.addOption('dateDesc', t('settings.defaultSort.option.dateDesc'));
 				drop.setValue(this.plugin.settings.defaultSort || 'none');
-				drop.onChange(async (value) => {
-					const v = (value as any) as 'none' | 'dailyDesc' | 'priceDesc' | 'dateDesc';
-					this.plugin.settings.defaultSort = v;
-					await this.plugin.saveSettings();
-				});
+                drop.onChange(async (value) => {
+                    const v = value as 'none' | 'dailyDesc' | 'priceDesc' | 'dateDesc';
+                    this.plugin.settings.defaultSort = v;
+                    await this.plugin.saveSettings();
+                });
 			});
 
 		new Setting(containerEl)
@@ -80,13 +80,14 @@ export class LacCostSetSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.defaultIcon)
 					.onChange(async (value) => {
 						const first = sanitizeToFirstEmoji(value);
-						if ((text as any).inputEl && (text as any).inputEl.value !== first) {
-							(text as any).inputEl.value = first;
+                        const inputEl = (text as unknown as { inputEl?: HTMLInputElement }).inputEl;
+                        if (inputEl && inputEl.value !== first) {
+                            inputEl.value = first;
 						}
 						this.plugin.settings.defaultIcon = first;
 						await this.plugin.saveSettings();
 					});
-				const inputEl = (text as any).inputEl as HTMLInputElement;
+                const inputEl = (text as unknown as { inputEl?: HTMLInputElement }).inputEl as HTMLInputElement | undefined;
 				if (inputEl) {
 					inputEl.addEventListener('paste', () => {
 						setTimeout(() => {
@@ -109,8 +110,8 @@ export class LacCostSetSettingTab extends PluginSettingTab {
 				drop.addOption('zh', '中文');
 				drop.addOption('en', 'English');
 				drop.setValue(this.plugin.settings.locale || 'auto');
-				drop.onChange(async (value) => {
-					this.plugin.settings.locale = (value as any);
+                drop.onChange(async (value) => {
+                    this.plugin.settings.locale = value as any;
 					await this.plugin.saveSettings();
 					// 立即刷新当前设置页，应用语言
 					this.display();

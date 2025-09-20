@@ -15,7 +15,7 @@ export function resolveLocale(locale: LocaleSetting | undefined): 'zh' | 'en' {
 }
 
 export function setLocale(locale: LocaleSetting | 'zh' | 'en'): void {
-	currentLocale = resolveLocale(locale as any);
+    currentLocale = resolveLocale(locale as LocaleSetting);
 }
 
 export function getCurrentLocale(): 'zh' | 'en' {
@@ -158,9 +158,9 @@ function formatVars(input: string, vars?: Record<string, string | number>): stri
 
 export function t(key: string, vars?: Record<string, string | number>, locale?: 'zh' | 'en'): string {
 	const lang = locale || currentLocale;
-	const entry = (dict as any)[key] as { zh: string; en: string } | undefined;
+    const entry = (dict as Record<string, { zh: string; en: string }>)[key];
 	if (!entry) return key;
-	const raw = (entry as any)[lang] ?? entry.en ?? key;
+    const raw = (entry as any)[lang] ?? entry.en ?? key;
 	return formatVars(raw, vars);
 }
 

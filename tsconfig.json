@@ -14,9 +14,14 @@
     "lib": [
       "DOM",
       "ES2017"
-    ]
+    ],
+    "jsx": "react-jsx",
+    "allowImportingTsExtensions": false,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts",
+    "**/*.tsx"
   ]
 }

@@ -1,0 +1,12 @@
+/* LineChart 样式 */
+
+.top-summary-chart {
+    position: relative;
+    width: 100%;
+}
+
+.line-chart-canvas {
+    width: 100%;
+    height: var(--canvas-height);
+    display: block;
+}

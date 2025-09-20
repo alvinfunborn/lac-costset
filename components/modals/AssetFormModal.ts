@@ -139,9 +139,9 @@ export class AssetFormModal {
 			priceGroup.appendChild(lbl);
 		}
 		const priceInput = document.createElement('input') as HTMLInputElement;
-		priceInput.type = 'number';
+		priceInput.type = 'text';
+		(priceInput as any).setAttribute('inputmode', 'decimal');
 		priceInput.placeholder = t('form.price.placeholder');
-		priceInput.step = '0.01';
 		if (this.asset) priceInput.value = this.asset.price.toString();
 		// 与 costsetapp 对齐：输入与失焦时净化为合法数字格式
 		const sanitizeNumeric = (el: HTMLInputElement) => {
@@ -254,9 +254,9 @@ export class AssetFormModal {
 		recycleGroup.className = 'form-group';
 		recycleGroup.appendChild(this.createLabel(t('form.recyclePrice')));
 		const recycleInput = document.createElement('input') as HTMLInputElement;
-		recycleInput.type = 'number';
+		recycleInput.type = 'text';
+		(recycleInput as any).setAttribute('inputmode', 'decimal');
 		recycleInput.placeholder = t('form.recycle.placeholder');
-		recycleInput.step = '0.01';
 		if (this.asset) recycleInput.value = this.asset.recyclePrice.toString();
 		recycleInput.addEventListener('input', () => sanitizeNumeric(recycleInput));
 		recycleInput.addEventListener('blur', () => { sanitizeNumeric(recycleInput); limitTwoDecimals(recycleInput); });
