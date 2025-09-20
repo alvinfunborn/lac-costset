@@ -627,7 +627,9 @@
 
 
 /* 让视图内容成为可伸展的列布局，确保列表可滚动 */
-.workspace-leaf[data-type="lac-costset-view"] .view-content {
+.workspace-leaf-content[data-type="lac-costset-view"],
+.workspace-leaf[data-type="lac-costset-view"] .view-content,
+.workspace-leaf[data-type="lac-costset-view"] .workspace-leaf-content {
   display: flex !important;
   flex-direction: column !important;
   min-height: 0 !important;
@@ -636,7 +638,9 @@
 }
 
 /* 直接子节点（即 this.containerEl）也需要成为可伸展列容器 */
-.workspace-leaf[data-type="lac-costset-view"] .view-content > div {
+.workspace-leaf-content[data-type="lac-costset-view"] > div,
+.workspace-leaf[data-type="lac-costset-view"] .view-content > div,
+.workspace-leaf[data-type="lac-costset-view"] .workspace-leaf-content > div {
   display: flex !important;
   flex-direction: column !important;
   min-height: 0 !important;
@@ -647,6 +651,7 @@
 /* 挂载根使用 lac-react-root，而非 page-root，避免额外包裹导致高度问题 */
 
 /* React 挂载点填满视图并允许子元素滚动布局 */
+.workspace-leaf-content[data-type="lac-costset-view"] .lac-react-root,
 .workspace-leaf[data-type="lac-costset-view"] .lac-react-root {
   display: flex !important;
   flex-direction: column !important;
@@ -876,7 +881,7 @@
 .form-actions {
   display: flex;
   gap: 12px;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 16px;
 }
 
@@ -914,15 +919,91 @@
 
 /* 资产表单弹窗：压缩高度与排版 */
 .asset-form-modal .date-picker-content {
-  padding: 16px;
+  padding: 16px 20px;
   gap: 12px;
+  display: flex;
+  flex-direction: column;
 }
+.asset-form-content { gap: 0 !important; }
 .asset-form-modal .asset-form {
   gap: 12px;
 }
 .asset-form-modal .form-group {
   gap: 6px;
 }
+
+/* 横向表单布局（替代内联样式） */
+.asset-form.asset-form--horizontal {
+  font-size: 15.5px;
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 8px;
+  column-gap: 0;
+  gap: 8px;
+}
+.asset-form.asset-form--horizontal .form-group {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 0;
+  margin: 0;
+  padding: 0;
+}
+.asset-form.asset-form--horizontal label {
+  min-width: 64px;
+  margin: 0;
+  text-align: right;
+  justify-self: end;
+}
+.asset-form.asset-form--horizontal .form-field {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+.asset-form.asset-form--horizontal input[type="text"],
+.asset-form.asset-form--horizontal input[type="number"] {
+  height: 32px;
+  padding: 4px 10px;
+  font-size: 15.5px;
+  line-height: 1.45;
+}
+.asset-form.asset-form--horizontal .tags-input { gap: 4px; }
+.asset-form.asset-form--horizontal .tag-chip { font-size: 12px; height: 18px; line-height: 18px; padding: 0 6px; border-radius: 4px; }
+.asset-form.asset-form--horizontal .tag-chip .remove { width: 16px; height: 16px; line-height: 16px; font-size: 12px; margin-left: 4px; }
+.asset-form.asset-form--horizontal .tags-input input { flex: 1; min-width: 120px; height: 28px; padding: 4px 10px; font-size: 14.5px; }
+
+/* 清除按钮显示切换（替代行内 display） */
+.input-with-clear .input-clear { display: none; }
+.input-with-clear .input-clear.visible { display: inline-flex; }
+.input-with-clear { position: relative; }
+.input-with-clear .input-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 18px;
+  background: transparent;
+  border: none;
+  color: #A0A3B1;
+  cursor: pointer;
+}
+.input-with-clear .input-clear:hover {
+  color: #F5F6FA;
+}
+
+/* 必填与错误样式（替代注入） */
+.label-required::after { content: ' *'; color: #ff4d4f; margin-left: 2px; }
+.form-group.has-error input[type="text"],
+.form-group.has-error input[type="number"] { border-color: #ff4d4f !important; box-shadow: 0 0 0 1px #ff4d4f inset; }
+.field-error { margin-top: 4px; color: #ff8587; font-size: 12px; line-height: 1.3; }
+.field-error:empty { display: none; margin-top: 0; }
 
 /* 危险按钮（删除） */
 .form-btn-danger {
@@ -973,6 +1054,13 @@
   line-height: 1;
   padding: 0 0 0 2px;
 }
+/* ConfirmModal 样式（从注入式迁移） */
+.date-picker-modal .confirm-message { color: #F5F6FA; line-height: 1.6; padding: 8px 0 16px; }
+.date-picker-modal .date-picker-btn.danger { background: #7a1e1e; color: #fff; }
+.date-picker-modal .date-picker-btn.danger:hover { background: #992525; }
+
+
+
 /* LacCostSetSettingTab 设置组件样式 */
 
 .setting-item {

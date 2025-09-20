@@ -162,7 +162,9 @@
 
 
 /* 让视图内容成为可伸展的列布局，确保列表可滚动 */
-.workspace-leaf[data-type="lac-costset-view"] .view-content {
+.workspace-leaf-content[data-type="lac-costset-view"],
+.workspace-leaf[data-type="lac-costset-view"] .view-content,
+.workspace-leaf[data-type="lac-costset-view"] .workspace-leaf-content {
   display: flex !important;
   flex-direction: column !important;
   min-height: 0 !important;
@@ -171,7 +173,9 @@
 }
 
 /* 直接子节点（即 this.containerEl）也需要成为可伸展列容器 */
-.workspace-leaf[data-type="lac-costset-view"] .view-content > div {
+.workspace-leaf-content[data-type="lac-costset-view"] > div,
+.workspace-leaf[data-type="lac-costset-view"] .view-content > div,
+.workspace-leaf[data-type="lac-costset-view"] .workspace-leaf-content > div {
   display: flex !important;
   flex-direction: column !important;
   min-height: 0 !important;
@@ -182,6 +186,7 @@
 /* 挂载根使用 lac-react-root，而非 page-root，避免额外包裹导致高度问题 */
 
 /* React 挂载点填满视图并允许子元素滚动布局 */
+.workspace-leaf-content[data-type="lac-costset-view"] .lac-react-root,
 .workspace-leaf[data-type="lac-costset-view"] .lac-react-root {
   display: flex !important;
   flex-direction: column !important;

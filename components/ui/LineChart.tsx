@@ -108,7 +108,7 @@ export const LineChart: React.FC<LineChartProps> = ({ points, selectedX, onSelec
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const ResizeObserverCtor = (window as any).ResizeObserver as any;
+    const ResizeObserverCtor: typeof ResizeObserver | undefined = (window as unknown as { ResizeObserver?: typeof ResizeObserver }).ResizeObserver;
     const ro = typeof ResizeObserverCtor === 'function' ? new ResizeObserverCtor(() => {
       draw();
     }) : null;

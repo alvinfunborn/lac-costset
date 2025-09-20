@@ -91,7 +91,7 @@ export const TopSummary: React.FC<TopSummaryProps> = ({ totalDailyCost, totalCos
         });
         // 初始选中样式
         markSelected(selectedIndex);
-        container.style.height = `${total * itemHeight}px`;
+        // 使用 CSS 自然高度，无需强制设置容器高度
         const initIndex = mid * values.length + selectedIndex;
         requestAnimationFrame(() => { container.scrollTop = initIndex * itemHeight; });
         let isScrolling = false;
@@ -138,7 +138,7 @@ export const TopSummary: React.FC<TopSummaryProps> = ({ totalDailyCost, totalCos
         items.forEach((it, i) => it.classList.toggle('selected', (i % values.length) === realIdx));
       };
       mark(selIndex);
-      container.style.height = `${values.length * repeat * itemHeight}px`;
+      // 使用 CSS 自然高度，无需强制设置容器高度
       requestAnimationFrame(() => { container.scrollTop = mid * values.length * itemHeight + selIndex * itemHeight; });
       let isScrolling = false;
       container.addEventListener('scroll', () => {

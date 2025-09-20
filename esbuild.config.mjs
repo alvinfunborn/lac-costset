@@ -60,6 +60,7 @@ const jsContext = await esbuild.context({
                 "styles/components/AssetManagerView.css",
                 "styles/components/AssetCard.css",
                 "styles/components/modals/AssetFormModal.css",
+                "styles/components/modals/ConfirmModal.css",
                 "styles/components/settings/LacCostSetSettingTab.css"
             ];
 	

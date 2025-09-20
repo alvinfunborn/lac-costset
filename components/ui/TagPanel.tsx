@@ -86,11 +86,11 @@ export const TagPanel: React.FC<TagPanelProps> = ({ tags, selectedTags, onTagCli
       if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
       hideTimerRef.current = window.setTimeout(() => setBarVisible(false), 700);
     };
-    el.addEventListener('scroll', onScroll, { passive: true } as any);
+    el.addEventListener('scroll', onScroll, { passive: true });
     const onResize = () => recalcScrollbar();
     window.addEventListener('resize', onResize);
     return () => {
-      el.removeEventListener('scroll', onScroll as any);
+      el.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
     };
   }, [recalcScrollbar]);

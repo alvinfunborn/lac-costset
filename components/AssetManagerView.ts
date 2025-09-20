@@ -28,8 +28,7 @@ export class AssetManagerView extends ItemView {
 	getIcon(): string { return 'package'; }
 
 	private showCenteredNotice(msgKey: string, duration = 5000) {
-		const n = new Notice(t(msgKey), duration);
-		try { (n as any).noticeEl?.classList?.add('lac-costset-notice'); } catch (_) {}
+		new Notice(t(msgKey), duration);
 	}
 
 	async onOpen() {
@@ -48,15 +47,7 @@ export class AssetManagerView extends ItemView {
 			return;
 		}
 
-		containerEl.style.display = 'flex';
-		containerEl.style.flexDirection = 'column';
-		containerEl.style.minHeight = '0';
-		containerEl.style.height = '100%';
 		const mount = containerEl.createDiv({ cls: 'lac-react-root' });
-		(mount.style as any).display = 'flex';
-		(mount.style as any).flexDirection = 'column';
-		(mount.style as any).minHeight = '0';
-		(mount.style as any).height = '100%';
 		this.reactRoot = createRoot(mount);
 		this.reactRoot.render(React.createElement(AppRoot, { app: this.app, repository: this.assetRepository, onBack: () => { try { this.leaf.detach(); } catch (_) {} } }));
 	}
