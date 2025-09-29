@@ -155,8 +155,6 @@ export default class LacCostSetPlugin extends Plugin {
 	}
 
 	onunload() {
-		// 清理资源并移除已打开的自定义视图，避免残留叶
-		try { this.app.workspace.detachLeavesOfType('lac-costset-view'); } catch (_) {}
 	}
 
 	async loadSettings() {
