@@ -7,11 +7,10 @@ export interface LineChartProps {
   selectedX?: number | null;
   onSelect?: (x: number) => void;
   onWidthChange?: (w: number) => void;
-  height?: number;
   pad?: number;
 }
 
-export const LineChart: React.FC<LineChartProps> = ({ points, selectedX, onSelect, onWidthChange, height = 20, pad = 0 }) => {
+export const LineChart: React.FC<LineChartProps> = ({ points, selectedX, onSelect, onWidthChange, pad = 0 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -22,11 +21,11 @@ export const LineChart: React.FC<LineChartProps> = ({ points, selectedX, onSelec
     if (!ctx) return;
 
     const rect = canvas.getBoundingClientRect();
-    if (rect.width <= 0) return; // 等待有宽度再绘制
+    if (rect.width <= 0) return; // 等待有尺寸再绘制
     canvas.width = rect.width;
-    canvas.height = height;
+    canvas.height = 20;
     const width = canvas.width;
-    const chartHeight = height;
+    const chartHeight = 20;
     if (onWidthChange) onWidthChange(width);
 
     const values = points.map(p => p.value);
@@ -86,12 +85,6 @@ export const LineChart: React.FC<LineChartProps> = ({ points, selectedX, onSelec
     }
   };
 
-  // 设置canvas高度CSS变量
-  useEffect(() => {
-    if (canvasRef.current) {
-      canvasRef.current.style.setProperty('--canvas-height', `${height}px`);
-    }
-  }, [height]);
 
   useEffect(() => {
     draw();
@@ -103,7 +96,7 @@ export const LineChart: React.FC<LineChartProps> = ({ points, selectedX, onSelec
     };
     canvas.addEventListener('click', onClick);
     return () => canvas.removeEventListener('click', onClick);
-  }, [points, selectedX, onSelect, height, pad]);
+  }, [points, selectedX, onSelect, pad]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -116,7 +109,7 @@ export const LineChart: React.FC<LineChartProps> = ({ points, selectedX, onSelec
       ro.observe(el);
       return () => ro.disconnect();
     }
-  }, [points, selectedX, height, pad]);
+  }, [points, selectedX, pad]);
 
   return (
     <div ref={containerRef} className="top-summary-chart">

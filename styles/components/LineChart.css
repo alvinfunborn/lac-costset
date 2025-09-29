@@ -7,6 +7,6 @@
 
 .line-chart-canvas {
     width: 100%;
-    height: var(--canvas-height);
+    height: 20px;
     display: block;
 }
