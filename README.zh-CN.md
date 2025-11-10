@@ -77,10 +77,18 @@ tags = ["computer", "work"]
 
 ## 安装方式
 
-> 本项目不会提交 Obsidian 社区插件审核。请手动安装或通过 BRAT 插件加载。
+> 本项目不会提交 Obsidian 社区插件审核。
 
-1) 将插件文件夹复制到 `.obsidian/plugins/`，然后在设置 → Community plugins 中启用。
-2) 或者安装社区插件 “BRAT”，把本仓库加入 BRAT 列表以获取更新。
+### 方式一：BRAT
+1. 在 Obsidian 社区插件中安装 BRAT。
+2. 打开 BRAT 设置页面。
+3. 点击 “Add Beta plugin”，输入仓库地址：`alvinfunborn/lac-costset`。
+4. 回到社区插件列表启用 LaC.CostSet，BRAT 会自动拉取最新发布包。
+
+### 方式二：手动安装
+1. 前往 GitHub Releases 下载最新压缩包。
+2. 解压后，若 Vault 中尚无 `.obsidian/plugins/lac-costset`，请创建该目录，并将发布包内容复制进去。
+3. 在设置 → Community plugins 中启用 LaC.CostSet。
 
 ## 注意事项
 
