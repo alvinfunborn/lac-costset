@@ -1,5 +1,7 @@
 # LaC.CostSet — Personal Inventory as Code for Obsidian
 
+[English](README.md) | [中文](README.zh-CN.md)
+
 Manage your belongings as structured TOML-in-Markdown inside Obsidian. Track price, purchase/end dates, tags, and optional recycle value. Explore daily cost trends, filter by tags, search, sort, and add/edit items with a clean UI.
 
 ![Demo](docs/demo.png)
@@ -80,10 +82,10 @@ Daily cost is computed from `(price - recycle_price) / daysUsed` where `daysUsed
 
 ## Installation
 
-1) Copy the plugin folder into `.obsidian/plugins/`.
-2) Enable it in Settings → Community plugins.
+> This project does not go through the Obsidian Community Plugin review. Install manually or load it via the BRAT plugin.
 
-Optional (testing via BRAT): install the community plugin “BRAT” and add your repository to get auto-updates.
+1) Copy the plugin folder into `.obsidian/plugins/`, then enable it in Settings → Community plugins.
+2) Alternatively, install the community plugin “BRAT” and add this repository to receive updates.
 
 ## Notes & limitations
 
