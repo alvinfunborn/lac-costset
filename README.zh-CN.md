@@ -81,7 +81,7 @@ tags = ["computer", "work"]
 ### 方式一：BRAT
 1. 在 Obsidian 社区插件中安装 BRAT。
 2. 打开 BRAT 设置页面。
-3. 点击 “Add Beta plugin”，输入仓库地址：`alvinfunborn/obsidian-plugins-lac-costset`。
+3. 点击 “Add Beta plugin”，输入仓库地址：`alvinfunborn/lac-costset`。
 4. 回到社区插件列表启用 LaC.CostSet，BRAT 会自动拉取最新发布包。
 
 ### 方式二：手动安装

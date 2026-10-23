@@ -86,7 +86,7 @@ Daily cost is computed from `(price - recycle_price) / daysUsed` where `daysUsed
 ### Method 1: BRAT
 1. Install the BRAT plugin from Community plugins.
 2. Open BRAT settings.
-3. Click “Add Beta plugin” and enter the repository: `alvinfunborn/obsidian-plugins-lac-costset`.
+3. Click “Add Beta plugin” and enter the repository: `alvinfunborn/lac-costset`.
 4. Enable LaC.CostSet in Community plugins; BRAT will pull the packaged release automatically.
 
 ### Method 2: Manual installation
