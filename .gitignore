@@ -1,1 +1,3 @@
 **/node_modules
+# Local plugin settings can contain API keys.
+data.json

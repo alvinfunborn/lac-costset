@@ -17,7 +17,7 @@ export class LacCostSetSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', { text: t('settings.title') });
+		new Setting(containerEl).setName(t('settings.title')).setHeading();
 		
 		// —— 格式与用法说明 ——
 		containerEl.createEl('p', { text: t('settings.guide.1'), cls: 'setting-item-description' });

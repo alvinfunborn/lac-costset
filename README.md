@@ -82,12 +82,11 @@ Daily cost is computed from `(price - recycle_price) / daysUsed` where `daysUsed
 
 ## Installation
 
-> This project does not go through the Obsidian Community Plugin review.
 
 ### Method 1: BRAT
 1. Install the BRAT plugin from Community plugins.
 2. Open BRAT settings.
-3. Click “Add Beta plugin” and enter the repository: `alvinfunborn/lac-costset`.
+3. Click “Add Beta plugin” and enter the repository: `alvinfunborn/obsidian-plugins-lac-costset`.
 4. Enable LaC.CostSet in Community plugins; BRAT will pull the packaged release automatically.
 
 ### Method 2: Manual installation
@@ -109,3 +108,7 @@ Daily cost is computed from `(price - recycle_price) / daysUsed` where `daysUsed
 ## License
 
 MIT License
+
+## Privacy and network use
+
+This plugin works offline and does not use network services.

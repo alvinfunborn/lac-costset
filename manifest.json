@@ -1,10 +1,10 @@
 {
-    "id": "lac-costset",
-    "name": "LaC.CostSet",
-    "version": "1.0.0",
-    "minAppVersion": "1.6.0",
-    "description": "Manage your personal inventory as structured data. Track purchase price, dates, tags, recycling value, and see daily cost stats.",
-    "author": "alvinfunborn",
-    "authorUrl": "https://github.com/alvinfunborn",
-    "isDesktopOnly": false
+  "id": "lac-costset",
+  "name": "LaC.CostSet",
+  "version": "1.0.1",
+  "minAppVersion": "1.7.2",
+  "description": "Manage your personal inventory as structured data. Track purchase price, dates, tags, recycling value, and see daily cost stats.",
+  "author": "alvinfunborn",
+  "authorUrl": "https://github.com/alvinfunborn",
+  "isDesktopOnly": false
 }

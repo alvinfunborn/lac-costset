@@ -189,13 +189,13 @@ export class AssetRepository {
 	// 解析TOML内容（支持嵌套节名，如 [costset.detail]）
 	private parseToml(content: string): any {
 		const lines = content.split('\n');
-		const result: any = {};
+		const result: any = Object.create(null);
 		let currentPath: string[] = [];
 
 		const ensurePath = (root: any, path: string[]): any => {
 			let node = root;
 			for (const part of path) {
-				if (!node[part] || typeof node[part] !== 'object') node[part] = {};
+				if (!Object.prototype.hasOwnProperty.call(node, part) || typeof node[part] !== 'object') node[part] = Object.create(null);
 				node = node[part];
 			}
 			return node;
