@@ -104,6 +104,9 @@ tags = ["computer", "work"]
 
 MIT License
 
+打包依赖的完整许可证见 [THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt)，分发的 `main.js` 中也包含这些声明。
+
+
 
 ## 隐私与网络使用
 

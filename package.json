@@ -1,6 +1,6 @@
 {
 	"name": "lac-costset",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Life as Code - CostSet 资产管理插件",
 	"main": "main.js",
 	"scripts": {

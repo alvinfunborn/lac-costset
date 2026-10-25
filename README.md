@@ -109,6 +109,9 @@ Daily cost is computed from `(price - recycle_price) / daysUsed` where `daysUsed
 
 MIT License
 
+Bundled dependency licenses are reproduced in [THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt) and in the distributed `main.js`.
+
+
 ## Privacy and network use
 
 This plugin works offline and does not use network services.
